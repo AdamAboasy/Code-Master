@@ -1,0 +1,3439 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام توكيل السيارات المتكامل</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
+
+        body {
+            font-family: 'Cairo', sans-serif;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .nav-link.active-tab {
+            background-color: #1f2937;
+            color: #60a5fa;
+            border-bottom: 2px solid #3b82f6;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #111827;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #374151;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4b5563;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-950 text-gray-100 min-h-screen pb-10">
+
+    <!-- Navigation -->
+    <nav class="bg-gray-900 border-b border-gray-800 sticky top-0 z-40 shadow-lg">
+        <div class="max-w-7xl mx-auto px-2 md:px-4">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-2">
+                    <div class="bg-blue-600 text-white p-2 rounded-lg"><i class="fas fa-car-side"></i></div>
+                    <span class="text-lg md:text-xl font-bold text-blue-500 hidden md:block">توكيل سيارات</span>
+                </div>
+                <div
+                    class="flex space-x-1 space-x-reverse overflow-x-auto no-scrollbar md:overflow-visible w-full md:w-auto md:mr-4">
+                    <button onclick="showTab('reception')"
+                        class="nav-link px-3 py-3 text-xs md:text-sm font-medium hover:text-blue-400 transition whitespace-nowrap rounded-t-lg"
+                        id="tab-reception">خدمة العملاء والاستقبال</button>
+                    <button onclick="showTab('workshop')"
+                        class="nav-link px-3 py-3 text-xs md:text-sm font-medium hover:text-blue-400 transition whitespace-nowrap rounded-t-lg"
+                        id="tab-workshop"><i class="fas fa-screwdriver-wrench ml-1"></i>الورشة</button>
+                    <button onclick="showTab('hr')"
+                        class="nav-link px-3 py-3 text-xs md:text-sm font-medium hover:text-blue-400 transition whitespace-nowrap rounded-t-lg"
+                        id="tab-hr"><i class="fas fa-users ml-1"></i>HR</button>
+                    <button onclick="showTab('settings')"
+                        class="nav-link px-3 py-3 text-xs md:text-sm font-medium hover:text-blue-400 transition whitespace-nowrap rounded-t-lg"
+                        id="tab-settings"><i class="fas fa-cog ml-1"></i>التعديل</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto p-4 md:p-6">
+
+        <!-- Reception Tab -->
+        <div id="reception" class="tab-content">
+            <!-- اختيار رئيسي بين خدمة العملاء والاستقبال -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- مربع خدمة العملاء -->
+                <div onclick="showTab('customer-service')"
+                    class="bg-gray-900 p-8 rounded-2xl border border-gray-800 hover:border-blue-500 transition cursor-pointer group hover:shadow-xl hover:shadow-blue-900/20">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-2xl font-bold text-blue-400">خدمة العملاء</h3>
+                        <i class="fas fa-headset text-4xl text-blue-500 group-hover:scale-110 transition-transform"></i>
+                    </div>
+                    <p class="text-sm text-gray-400">Customer Service</p>
+                    <div class="mt-4 text-blue-400 text-sm font-bold">اضغط للدخول <i class="fas fa-arrow-left mr-2"></i>
+                    </div>
+                </div>
+
+                <!-- مربع الاستقبال -->
+                <div onclick="showTab('reception-desk')"
+                    class="bg-gray-900 p-8 rounded-2xl border border-gray-800 hover:border-green-500 transition cursor-pointer group hover:shadow-xl hover:shadow-green-900/20">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-2xl font-bold text-green-400">الاستقبال</h3>
+                        <i
+                            class="fas fa-concierge-bell text-4xl text-green-500 group-hover:scale-110 transition-transform"></i>
+                    </div>
+                    <p class="text-sm text-gray-400">Reception</p>
+                    <div class="mt-4 text-green-400 text-sm font-bold">اضغط للدخول <i
+                            class="fas fa-arrow-left mr-2"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Customer Service Page (صفحة خدمة العملاء) -->
+        <div id="customer-service" class="tab-content">
+            <div class="flex items-center gap-4 mb-6 border-b border-gray-800 pb-4">
+                <button onclick="showTab('reception')"
+                    class="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition">
+                    <i class="fas fa-arrow-right ml-2"></i>رجوع
+                </button>
+                <h2 class="text-2xl font-bold text-blue-400">
+                    <i class="fas fa-headset ml-2"></i>خدمة العملاء
+                </h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div onclick="showTab('maintenance-booking')"
+                    class="bg-gray-900 p-6 rounded-xl border border-gray-800 hover:border-blue-500 transition cursor-pointer group">
+                    <i
+                        class="fas fa-calendar-check text-3xl mb-4 text-blue-400 group-hover:scale-110 transition-transform"></i>
+                    <h3 class="text-lg font-bold">حجز ميعاد صيانة</h3>
+                    <p class="text-sm text-gray-400 mt-2">تسجيل أو إدارة مواعيد صيانة العملاء.</p>
+                </div>
+                <div
+                    class="bg-gray-900 p-6 rounded-xl border border-gray-800 hover:border-yellow-500 transition cursor-pointer group">
+                    <i
+                        class="fas fa-user-clock text-3xl mb-4 text-yellow-400 group-hover:scale-110 transition-transform"></i>
+                    <h3 class="text-lg font-bold">متابعة عميل</h3>
+                    <p class="text-sm text-gray-400 mt-2">تسجيل ومتابعة حالة العميل بعد الصيانة.</p>
+                </div>
+                <div
+                    class="bg-gray-900 p-6 rounded-xl border border-gray-800 hover:border-red-500 transition cursor-pointer group">
+                    <i
+                        class="fas fa-comment-dots text-3xl mb-4 text-red-400 group-hover:scale-110 transition-transform"></i>
+                    <h3 class="text-lg font-bold">شكوى العميل</h3>
+                    <p class="text-sm text-gray-400 mt-2">تسجيل شكاوى العملاء للتعامل معها.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Maintenance Booking Page (حجز ميعاد صيانة) -->
+        <div id="maintenance-booking" class="tab-content">
+            <div class="flex items-center gap-4 mb-6 border-b border-gray-800 pb-4">
+                <button onclick="showTab('customer-service')"
+                    class="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition">
+                    <i class="fas fa-arrow-right ml-2"></i>رجوع
+                </button>
+                <h2 class="text-2xl font-bold text-blue-400">
+                    <i class="fas fa-calendar-check ml-2"></i>حجز ميعاد صيانة
+                </h2>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-1 bg-gray-900 border border-gray-800 p-6 rounded-xl">
+                    <h3 class="text-lg font-bold text-white mb-4">بيانات الحجز</h3>
+                    <form id="maintenanceBookingForm" class="space-y-4">
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">اسم العميل *</label>
+                            <input type="text" name="clientName" required
+                                class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-blue-500 focus:outline-none transition">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">رقم التليفون *</label>
+                            <input type="tel" name="clientPhone" required
+                                class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-blue-500 focus:outline-none transition">
+                        </div>
+
+                        <div class="bg-gray-800/40 border border-gray-700 p-4 rounded-lg">
+                            <h4 class="text-sm font-bold text-blue-300 mb-3"><i class="fas fa-car ml-2"></i>بيانات
+                                السيارة</h4>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-xs text-gray-400 mb-1">ماركة العربية *</label>
+                                    <select name="carBrand" id="mbCarBrand" required onchange="populateMBCarModels()"
+                                        class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-blue-500 focus:outline-none transition">
+                                        <option value="">اختر الماركة</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-400 mb-1">الموديل *</label>
+                                    <select name="carModel" id="mbCarModel" required onchange="populateMBCarEngines()"
+                                        class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-blue-500 focus:outline-none transition">
+                                        <option value="">اختر الماركة أولاً</option>
+                                    </select>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs text-gray-400 mb-1">سنة الصنع *</label>
+                                        <input type="number" name="carYear" required min="1950" max="2026"
+                                            class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-blue-500 focus:outline-none transition"
+                                            placeholder="مثلاً: 2020">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs text-gray-400 mb-1">سعة المحرك (CC) *</label>
+                                        <select name="carEngine" id="mbCarEngine" required
+                                            class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-blue-500 focus:outline-none transition">
+                                            <option value="">اختر الموديل أولاً</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-800/40 border border-gray-700 p-4 rounded-lg">
+                            <h4 class="text-sm font-bold text-blue-300 mb-3"><i class="fas fa-clock ml-2"></i>تاريخ ووقت
+                                الدخول</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs text-gray-400 mb-1">تاريخ دخول العربية *</label>
+                                    <input type="date" name="entryDate" required
+                                        class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-blue-500 focus:outline-none transition">
+                                    <p class="text-[11px] text-gray-500 mt-1">يمكن اختيار تاريخ بعد عدة أيام</p>
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-400 mb-1">وقت دخول العربية *</label>
+                                    <input type="time" name="entryTime" required
+                                        class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-blue-500 focus:outline-none transition">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">نوع الصيانة *</label>
+                            <select name="maintenanceType" required
+                                class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-blue-500 focus:outline-none transition">
+                                <option value="">اختر نوع الصيانة</option>
+                                <option value="صيانة دورية">صيانة دورية</option>
+                                <option value="ميكانيكا">ميكانيكا</option>
+                                <option value="كهرباء">كهرباء</option>
+                                <option value="سمكرة ودهان">سمكرة ودهان</option>
+                                <option value="تشخيص أعطال">تشخيص أعطال</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">شكوى العميل *</label>
+                            <textarea name="complaint" required rows="3"
+                                class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-blue-500 focus:outline-none transition"></textarea>
+                        </div>
+
+                        <button type="submit"
+                            class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-bold transition">
+                            <i class="fas fa-save ml-2"></i>حفظ الحجز
+                        </button>
+                    </form>
+                </div>
+
+                <div class="lg:col-span-2 bg-gray-900 border border-gray-800 p-6 rounded-xl">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
+                        <h3 class="text-xl font-bold text-white">جدول حجوزات الصيانة</h3>
+                        <input type="text" id="maintenanceSearch" oninput="renderMaintenanceBookings()"
+                            placeholder="بحث بالاسم/الهاتف/الماركة/الموديل/النوع..."
+                            class="bg-gray-800 border border-gray-700 p-2 rounded-lg text-sm w-full md:w-80">
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right border-collapse">
+                            <thead>
+                                <tr class="bg-gray-800 border-b border-gray-700 text-gray-400 text-sm">
+                                    <th class="p-3">رقم الحجز</th>
+                                    <th class="p-3">العميل</th>
+                                    <th class="p-3">السيارة</th>
+                                    <th class="p-3">تاريخ/وقت الدخول</th>
+                                    <th class="p-3">نوع الصيانة</th>
+                                    <th class="p-3">الشكوى</th>
+                                </tr>
+                            </thead>
+                            <tbody id="maintenanceBookingsTableBody" class="text-sm">
+                                <!-- JS -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="mt-6 bg-gray-800/60 border border-gray-700 p-4 rounded-lg text-sm">
+                        <p class="font-bold text-blue-300 mb-2">ملاحظة:</p>
+                        <ul class="list-disc list-inside text-gray-300 space-y-1">
+                            <li>رقم الحجز تسلسلي يبدأ من 1.</li>
+                            <li>يمكن اختيار تاريخ دخول بعد عدة أيام حسب موعد العميل.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reception Desk Page (صفحة الاستقبال) -->
+        <div id="reception-desk" class="tab-content">
+            <div class="flex items-center gap-4 mb-6 border-b border-gray-800 pb-4">
+                <button onclick="showTab('reception')"
+                    class="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition">
+                    <i class="fas fa-arrow-right ml-2"></i>رجوع
+                </button>
+                <h2 class="text-2xl font-bold text-green-400">
+                    <i class="fas fa-concierge-bell ml-2"></i>الاستقبال
+                </h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div onclick="showTab('add-client')"
+                    class="bg-gray-900 p-6 rounded-xl border border-gray-800 hover:border-green-500 transition cursor-pointer group">
+                    <i
+                        class="fas fa-user-plus text-3xl mb-4 text-green-500 group-hover:scale-110 transition-transform"></i>
+                    <h3 class="text-lg font-bold">تسجيل عميل جديد</h3>
+                    <p class="text-sm text-gray-400 mt-2">إضافة بيانات عميل جديد للنظام</p>
+                </div>
+                <div onclick="showTab('add-car')"
+                    class="bg-gray-900 p-6 rounded-xl border border-gray-800 hover:border-purple-500 transition cursor-pointer group">
+                    <i class="fas fa-car text-3xl mb-4 text-purple-500 group-hover:scale-110 transition-transform"></i>
+                    <h3 class="text-lg font-bold">تسجيل سيارة جديدة</h3>
+                    <p class="text-sm text-gray-400 mt-2">إضافة سيارة وربطها بعميل</p>
+                </div>
+                <div onclick="showTab('work-orders')"
+                    class="bg-gray-900 p-6 rounded-xl border border-gray-800 hover:border-yellow-500 transition cursor-pointer group">
+                    <i
+                        class="fas fa-file-invoice-dollar text-3xl mb-4 text-yellow-500 group-hover:scale-110 transition-transform"></i>
+                    <h3 class="text-lg font-bold">إنشاء أمر شغل</h3>
+                    <p class="text-sm text-gray-400 mt-2">بدء أمر شغل جديد لسيارة مسجلة</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Client Tab (Page) -->
+        <div id="add-client" class="tab-content active">
+            <h2 class="text-2xl font-bold mb-6 text-green-400 border-b border-gray-800 pb-2">
+                <i class="fas fa-user-plus ml-2"></i>صفحة إنشاء عميل جديد
+            </h2>
+            <div class="bg-gray-900 border border-gray-800 p-6 md:p-8 rounded-xl shadow-2xl">
+                <form id="clientFormPage" class="space-y-6">
+                    <!-- Name Section -->
+                    <div>
+                        <h3 class="text-lg font-semibold text-blue-400 mb-3">البيانات الشخصية</h3>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div><label class="block text-xs text-gray-400 mb-1">الاسم الأول *</label><input type="text"
+                                    name="n1" required
+                                    class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-blue-500 focus:outline-none transition">
+                            </div>
+                            <div><label class="block text-xs text-gray-400 mb-1">اسم الأب *</label><input type="text"
+                                    name="n2" required
+                                    class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-blue-500 focus:outline-none transition">
+                            </div>
+                            <div><label class="block text-xs text-gray-400 mb-1">اسم الجد *</label><input type="text"
+                                    name="n3" required
+                                    class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-blue-500 focus:outline-none transition">
+                            </div>
+                            <div><label class="block text-xs text-gray-400 mb-1">اللقب / العائلة *</label><input
+                                    type="text" name="n4" required
+                                    class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-blue-500 focus:outline-none transition">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact & ID -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div><label class="block text-xs text-gray-400 mb-1">رقم التليفون *</label><input type="tel"
+                                name="phone" required
+                                class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-blue-500 focus:outline-none transition">
+                        </div>
+                        <div><label class="block text-xs text-gray-400 mb-1">الرقم القومي (14 رقم) *</label><input
+                                type="text" name="nationalId" required minlength="14" maxlength="14"
+                                class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-blue-500 focus:outline-none transition">
+                        </div>
+                    </div>
+
+                    <!-- Address -->
+                    <div>
+                        <h3 class="text-lg font-semibold text-blue-400 mb-3">العنوان</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">المحافظة *</label>
+                                <select name="province" required
+                                    class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-blue-500 focus:outline-none transition">
+                                    <option value="">اختر المحافظة</option>
+                                    <option value="القاهرة">القاهرة</option>
+                                    <option value="الجيزة">الجيزة</option>
+                                    <option value="الإسكندرية">الإسكندرية</option>
+                                    <option value="الدقهلية">الدقهلية</option>
+                                    <option value="الشرقية">الشرقية</option>
+                                    <option value="الغربية">الغربية</option>
+                                    <option value="القليوبية">القليوبية</option>
+                                    <option value="المنوفية">المنوفية</option>
+                                    <option value="البحيرة">البحيرة</option>
+                                    <option value="دمياط">دمياط</option>
+                                    <option value="بورسعيد">بورسعيد</option>
+                                    <option value="الإسماعيلية">الإسماعيلية</option>
+                                    <option value="السويس">السويس</option>
+                                    <option value="كفر الشيخ">كفر الشيخ</option>
+                                    <option value="الفيوم">الفيوم</option>
+                                    <option value="بني سويف">بني سويف</option>
+                                    <option value="المنيا">المنيا</option>
+                                    <option value="أسيوط">أسيوط</option>
+                                    <option value="سوهاج">سوهاج</option>
+                                    <option value="قنا">قنا</option>
+                                    <option value="الأقصر">الأقصر</option>
+                                    <option value="أسوان">أسوان</option>
+                                </select>
+                            </div>
+                            <div><label class="block text-xs text-gray-400 mb-1">المنطقة / الحي *</label><input
+                                    type="text" name="area" required
+                                    class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-blue-500 focus:outline-none transition">
+                            </div>
+                            <div><label class="block text-xs text-gray-400 mb-1">العنوان بالتفصيل *</label><input
+                                    type="text" name="fullAddress" required
+                                    class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-blue-500 focus:outline-none transition">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Client Type -->
+                    <div class="bg-gray-800/50 p-4 rounded-lg border border-gray-700">
+                        <label class="block text-sm font-bold text-gray-300 mb-3">نوع العميل *</label>
+                        <div class="flex gap-6 mb-4">
+                            <label
+                                class="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-gray-800 transition">
+                                <input type="radio" name="clientType" value="individual" checked
+                                    onchange="toggleCompanyFields(false)" class="w-4 h-4 text-blue-600">
+                                <span class="font-bold">أفراد</span>
+                            </label>
+                            <label
+                                class="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-gray-800 transition">
+                                <input type="radio" name="clientType" value="company"
+                                    onchange="toggleCompanyFields(true)" class="w-4 h-4 text-blue-600">
+                                <span class="font-bold">شركات</span>
+                            </label>
+                        </div>
+
+                        <div id="companyFields"
+                            class="hidden animate-fade-in space-y-4 border-t border-gray-700 pt-4 mt-2">
+                            <div>
+                                <label class="block text-sm text-green-400 font-bold mb-1">شركة التأمين التابعة لها
+                                    *</label>
+                                <select name="insuranceCompany" id="insuranceSelectPage"
+                                    class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-green-500 focus:outline-none transition">
+                                    <!-- Loaded from JS -->
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- حقول المندوب - تظهر دائماً واختيارية -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 pt-4 border-t border-gray-700">
+                            <div><label class="block text-xs text-gray-400 mb-1">اسم المندوب (اختياري)</label><input
+                                    type="text" name="repName"
+                                    class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg"></div>
+                            <div><label class="block text-xs text-gray-400 mb-1">رقم تليفون المندوب
+                                    (اختياري)</label><input type="tel" name="repPhone"
+                                    class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg"></div>
+                        </div>
+                    </div>
+
+                    <div class="pt-4">
+                        <button type="submit"
+                            class="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-500 hover:to-green-600 text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-green-900/50 transition transform hover:-translate-y-1">
+                            <i class="fas fa-save ml-2"></i>حفظ واستخراج كود العميل
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Add Car Tab (Page) -->
+        <div id="add-car" class="tab-content">
+            <h2 class="text-2xl font-bold mb-6 text-purple-400 border-b border-gray-800 pb-2">
+                <i class="fas fa-car ml-2"></i>صفحة إنشاء سيارة جديدة
+            </h2>
+            <div class="bg-gray-900 border border-gray-800 p-6 md:p-8 rounded-xl shadow-2xl">
+                <form id="carFormPage" class="space-y-6">
+
+                    <!-- Basic Car Info -->
+                    <div>
+                        <h3 class="text-lg font-semibold text-blue-400 mb-3">بيانات السيارة الأساسية</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">الماركة *</label>
+                                <select name="brand" id="carBrandSelectPage" required onchange="populateModelsPage()"
+                                    class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-blue-500 focus:outline-none transition">
+                                    <!-- JS -->
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">الموديل *</label>
+                                <select name="model" id="carModelSelectPage" required onchange="populateEnginesPage()"
+                                    class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-blue-500 focus:outline-none transition">
+                                    <option value="">اختر الماركة أولاً</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">سنة الصنع *</label>
+                                <input type="number" name="year" required min="1950" max="2026"
+                                    class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-blue-500 focus:outline-none transition"
+                                    placeholder="مثلاً: 2024">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">سعة المحرك (CC) *</label>
+                                <select name="engine" id="carEngineSelectPage" required
+                                    class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-blue-500 focus:outline-none transition">
+                                    <option value="">اختر الموديل أولاً</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Technical Details -->
+                    <div class="bg-gray-800/30 p-4 rounded-lg border border-gray-700/50">
+                        <h3 class="text-lg font-semibold text-orange-400 mb-3">التفاصيل التقنية</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">رقم الشاسيه (17 حرف/رقم) *</label>
+                                <input type="text" name="chassis" minlength="17" maxlength="17" required
+                                    class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg font-mono tracking-widest uppercase focus:border-orange-500 focus:outline-none transition"
+                                    placeholder="XXXXXXXXXXXXXXXXX">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">رقم المحرك *</label>
+                                <input type="text" name="engineNo" required
+                                    class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-orange-500 focus:outline-none transition">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                            <div><label class="block text-xs text-gray-400 mb-1">رقم اللوحة <span
+                                        class="text-red-500">*</span></label><input type="text" name="plate" required
+                                    class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg"></div>
+                            <div><label class="block text-xs text-gray-400 mb-1">اللون <span
+                                        class="text-red-500">*</span></label><input type="text" name="color" required
+                                    class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg"></div>
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">نوع الوقود <span
+                                        class="text-red-500">*</span></label>
+                                <select name="fuel" required
+                                    class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg">
+                                    <option value="بنزين">بنزين</option>
+                                    <option value="ديزل">ديزل</option>
+                                    <option value="كهرباء">كهرباء</option>
+                                    <option value="هجين">هجين</option>
+                                    <option value="غاز طبيعي">غاز طبيعي</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">نوع الهيكل <span
+                                        class="text-red-500">*</span></label>
+                                <select name="type" id="carBodyTypeSelectPage" required
+                                    class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg">
+                                    <option value="">اختر نوع الهيكل</option>
+                                    <!-- Populated from Settings (Body Types) -->
+                                </select>
+                                <p class="text-[11px] text-gray-500 mt-1">يمكن تعديل الأنواع من صفحة التعديل</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Client Linking -->
+                    <div class="bg-blue-900/20 border border-blue-800 p-6 rounded-xl">
+                        <h4 class="text-lg font-bold mb-2 text-blue-400"><i class="fas fa-link ml-2"></i>ربط السيارة
+                            بعميل (إجباري)</h4>
+                        <p class="text-xs text-gray-400 mb-4">يجب ربط السيارة بمالك مسجل. ابحث بالكود أو الاسم.</p>
+
+                        <div class="flex gap-2 relative">
+                            <input type="text" id="clientLinkSearchPage"
+                                placeholder="ابحث باسم العميل أو الكود (مثال: C1234)..."
+                                class="flex-1 bg-gray-900 border border-blue-700 p-3 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                            <button type="button" onclick="searchClientForCarPage()"
+                                class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-bold transition">بحث</button>
+                        </div>
+
+                        <div id="clientSearchResultPage"
+                            class="mt-4 space-y-2 max-h-40 overflow-y-auto custom-scrollbar"></div>
+
+                        <input type="hidden" name="clientCode" id="linkedClientCodePage" required>
+                        <div id="linkedClientDisplayPage"
+                            class="mt-4 p-3 bg-green-900/30 border border-green-700 rounded-lg text-green-400 flex items-center gap-2 hidden animate-pulse">
+                            <i class="fas fa-check-circle text-xl"></i>
+                            <span class="font-bold text-lg">تم اختيار العميل: <span
+                                    id="linkedClientNameSpan"></span></span>
+                        </div>
+                    </div>
+
+                    <div class="pt-4">
+                        <button type="submit"
+                            class="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-500 hover:to-purple-600 text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-purple-900/50 transition transform hover:-translate-y-1">
+                            <i class="fas fa-save ml-2"></i>حفظ واستخراج كود السيارة
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Work Orders Tab -->
+        <div id="work-orders" class="tab-content">
+            <h2 class="text-2xl font-bold mb-6 text-yellow-400 border-b border-gray-800 pb-2">
+                <i class="fas fa-wrench ml-2"></i>فتح أمر شغل جديد
+            </h2>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-1 bg-gray-900 border border-gray-800 p-6 rounded-xl">
+                    <h3 class="text-lg font-bold text-white mb-4">بيانات أمر الشغل</h3>
+                    <form id="workOrderForm" class="space-y-4">
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">نوع أمر الشغل *</label>
+                            <select name="orderType" id="workOrderTypeSelect" required onchange="toggleCashSubtype()"
+                                class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-yellow-500 focus:outline-none transition">
+                                <option value="">اختر نوع أمر الشغل</option>
+                                <option value="كاش">كاش</option>
+                                <option value="داخلي">داخلي</option>
+                                <option value="come back">come back</option>
+                                <option value="تأمين">تأمين</option>
+                                <option value="ضمان">ضمان</option>
+                                <option value="إرضاء عميل">إرضاء عميل</option>
+                            </select>
+                        </div>
+
+                        <div id="cashSubtypeWrap" class="hidden">
+                            <label class="block text-xs text-gray-400 mb-1">تصنيف الكاش *</label>
+                            <div class="bg-gray-800/50 border border-gray-700 p-3 rounded-lg">
+                                <div class="flex gap-6">
+                                    <label
+                                        class="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-gray-800 transition">
+                                        <input type="radio" name="cashSubtype" value="أفراد"
+                                            class="w-4 h-4 text-yellow-500">
+                                        <span class="font-bold">أفراد</span>
+                                    </label>
+                                    <label
+                                        class="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-gray-800 transition">
+                                        <input type="radio" name="cashSubtype" value="شركات"
+                                            class="w-4 h-4 text-yellow-500">
+                                        <span class="font-bold">شركات</span>
+                                    </label>
+                                </div>
+                                <p class="text-xs text-gray-400 mt-2">يظهر هذا الاختيار فقط عند اختيار نوع أمر الشغل:
+                                    كاش</p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">كود العميل *</label>
+                            <select name="clientCode" id="workOrderClientSelect" required
+                                onchange="populateWorkOrderCars()"
+                                class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-yellow-500 focus:outline-none transition">
+                                <option value="">اختر العميل</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">السيارة *</label>
+                            <select name="carCode" id="workOrderCarSelect" required onchange="populateWorkOrderPrevKm()"
+                                class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-yellow-500 focus:outline-none transition">
+                                <option value="">اختر العميل أولاً</option>
+                            </select>
+                        </div>
+
+                        <div class="bg-gray-800/40 border border-gray-700 p-4 rounded-lg">
+                            <h4 class="text-sm font-bold text-yellow-300 mb-3"><i
+                                    class="fas fa-tachometer-alt ml-2"></i>العداد والتوقيت</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs text-gray-400 mb-1">عداد الكيلومتر السابق *</label>
+                                    <input type="number" name="previousKm" id="workOrderPrevKm" required readonly
+                                        class="w-full bg-gray-700 border border-gray-700 p-3 rounded-lg text-gray-300 cursor-not-allowed">
+                                    <p class="text-[11px] text-gray-500 mt-1">يتم تعبئته تلقائياً من آخر أمر شغل لنفس
+                                        السيارة</p>
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-400 mb-1">عداد الكيلومتر الحالي *</label>
+                                    <input type="number" name="currentKm" id="workOrderCurrentKm" required min="0"
+                                        class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-yellow-500 focus:outline-none transition">
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                                <div>
+                                    <label class="block text-xs text-gray-400 mb-1">تاريخ/وقت الدخول *</label>
+                                    <input type="datetime-local" step="1" name="entryAt" id="workOrderEntryAt" required
+                                        readonly
+                                        class="w-full bg-gray-700 border border-gray-700 p-3 rounded-lg text-gray-300 cursor-not-allowed">
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs text-gray-400 mb-1">يوم الخروج المتوقع *</label>
+                                        <input type="date" name="expectedExitDate" id="workOrderExpectedExitDate"
+                                            required
+                                            class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-yellow-500 focus:outline-none transition">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs text-gray-400 mb-1">ساعة الخروج المتوقعة *</label>
+                                        <input type="time" name="expectedExitTime" id="workOrderExpectedExitTime"
+                                            required
+                                            class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-yellow-500 focus:outline-none transition">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">نوع الخدمة المطلوبة *</label>
+                            <select name="serviceType" required
+                                class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg">
+                                <option value="صيانة دورية">صيانة دورية</option>
+                                <option value="ميكانيكا">ميكانيكا</option>
+                                <option value="كهرباء">كهرباء</option>
+                                <option value="سمكرة ودهان">سمكرة ودهان</option>
+                                <option value="تشخيص أعطال">تشخيص أعطال</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">شكوى العميل / الوصف *</label>
+                            <textarea name="complaint" required rows="3"
+                                class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-yellow-500 focus:outline-none"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">المهندس/الفني المسؤول</label>
+                            <input type="text" name="technician"
+                                class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg">
+                        </div>
+
+                        <button type="submit"
+                            class="w-full bg-yellow-500 hover:bg-yellow-600 text-gray-900 py-3 rounded-lg font-bold transition">
+                            <i class="fas fa-plus ml-2"></i>فتح أمر شغل
+                        </button>
+                    </form>
+                </div>
+
+                <div class="lg:col-span-2 bg-gray-900 border border-gray-800 p-6 rounded-xl">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
+                        <h3 class="text-xl font-bold text-white">سجل أوامر الشغل</h3>
+                        <input type="text" id="workOrderSearch" oninput="renderWorkOrders()"
+                            placeholder="بحث بالعميل/السيارة/اللوحة/النوع/الرقم..."
+                            class="bg-gray-800 border border-gray-700 p-2 rounded-lg text-sm w-full md:w-72">
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right border-collapse">
+                            <thead>
+                                <tr class="bg-gray-800 border-b border-gray-700 text-gray-400 text-sm">
+                                    <th class="p-3">رقم أمر الشغل</th>
+                                    <th class="p-3">العميل</th>
+                                    <th class="p-3">السيارة</th>
+                                    <th class="p-3">العداد الحالي</th>
+                                    <th class="p-3">وقت الدخول</th>
+                                    <th class="p-3">الخروج المتوقع</th>
+                                    <th class="p-3">نوع الأمر</th>
+                                    <th class="p-3">الخدمة</th>
+                                    <th class="p-3">الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="workOrdersTableBody" class="text-sm">
+                                <!-- JS -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="mt-6 bg-gray-800/60 border border-gray-700 p-4 rounded-lg text-sm">
+                        <p class="font-bold text-yellow-300 mb-2">شرح رقم أمر الشغل: <span class="font-mono">1, 2,
+                                3...</span></p>
+                        <ul class="list-disc list-inside text-gray-300 space-y-1">
+                            <li>رقم تسلسلي يبدأ من 1 ويزيد تلقائياً مع كل أمر شغل جديد.</li>
+                            <li>يُستخدم لتتبع وتحديد أوامر الشغل بسهولة.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Inventory Tab -->
+        <div id="inventory" class="tab-content">
+            <div
+                class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6 border-b border-gray-800 pb-4">
+                <h2 class="text-2xl font-bold text-orange-400">
+                    <i class="fas fa-boxes ml-2"></i>إدارة المنتجات والمخزون
+                </h2>
+                <button onclick="document.getElementById('warehouseFormModal').classList.remove('hidden')"
+                    class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl font-bold transition flex items-center gap-2">
+                    <i class="fas fa-warehouse"></i>
+                    <span>إضافة مخزن جديد</span>
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Add Product Form -->
+                <div class="lg:col-span-1 bg-gray-900 p-6 rounded-xl border border-gray-800 h-fit">
+                    <h3 class="text-xl font-bold text-white mb-4">إضافة منتج للمخزن</h3>
+                    <form id="productForm" class="space-y-4">
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">اسم المنتج *</label>
+                            <input type="text" name="productName" required
+                                class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-orange-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">المخزن *</label>
+                            <div class="flex gap-2">
+                                <select name="warehouseId" id="inventoryWarehouseSelect" required
+                                    class="flex-1 bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-orange-500 focus:outline-none">
+                                    <option value="">اختر المخزن</option>
+                                    <!-- Populated by JS -->
+                                </select>
+                                <button type="button"
+                                    onclick="document.getElementById('warehouseFormModal').classList.remove('hidden')"
+                                    class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition"
+                                    title="إضافة مخزن جديد">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">الكمية *</label>
+                                <input type="number" name="quantity" required min="1"
+                                    class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-orange-500 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">سعر البيع</label>
+                                <input type="number" name="price"
+                                    class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-orange-500 focus:outline-none">
+                            </div>
+                        </div>
+                        <button type="submit"
+                            class="w-full bg-orange-600 hover:bg-orange-700 text-white py-3 rounded-lg font-bold transition">
+                            <i class="fas fa-plus ml-2"></i>إضافة للمخزون
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Product List -->
+                <div class="lg:col-span-2 bg-gray-900 p-6 rounded-xl border border-gray-800">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-bold text-white">جرد المخازن</h3>
+                        <div class="relative">
+                            <input type="text" id="inventorySearch" oninput="renderInventory()"
+                                placeholder="بحث عن منتج..."
+                                class="bg-gray-800 border border-gray-700 p-2 rounded-lg text-sm w-48 focus:w-64 transition-all">
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right border-collapse">
+                            <thead>
+                                <tr class="bg-gray-800 border-b border-gray-700 text-gray-400 text-sm">
+                                    <th class="p-3">كود المنتج</th>
+                                    <th class="p-3">اسم المنتج</th>
+                                    <th class="p-3">المخزن</th>
+                                    <th class="p-3">الكمية</th>
+                                    <th class="p-3">السعر</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inventoryTableBody" class="text-sm">
+                                <!-- JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Price Calculator Tab -->
+        <div id="price-calculator" class="tab-content">
+            <h2 class="text-2xl font-bold mb-6 text-red-400 border-b border-gray-800 pb-2">
+                <i class="fas fa-calculator ml-2"></i>حاسبة الأسعار
+            </h2>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Calculator Form -->
+                <div class="lg:col-span-2 bg-gray-900 border border-gray-800 p-6 rounded-xl">
+                    <h3 class="text-xl font-bold mb-6 text-white">حساب السعر النهائي</h3>
+                    <form id="priceCalculatorPageForm" class="space-y-6">
+                        <!-- Client Info -->
+                        <div class="bg-gray-800/50 p-4 rounded-lg border border-gray-700">
+                            <h4 class="font-bold text-blue-400 mb-3">بيانات العميل</h4>
+                            <div>
+                                <label class="block text-sm text-gray-400 mb-2">اسم العميل *</label>
+                                <input type="text" name="clientName" required
+                                    class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-blue-500 focus:outline-none">
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                                <div>
+                                    <label class="block text-sm text-gray-400 mb-2">رقم التليفون *</label>
+                                    <input type="tel" name="clientPhone" required
+                                        class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-blue-500 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-gray-400 mb-2">كود العميل *</label>
+                                    <input type="text" name="clientCode" required
+                                        class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-blue-500 focus:outline-none"
+                                        placeholder="مثلاً: C-12345">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Product Selection from Warehouse -->
+                        <div class="bg-gray-800/50 p-4 rounded-lg border border-gray-700">
+                            <h4 class="font-bold text-green-400 mb-3">المنتج المستخدم من المخزن</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm text-gray-400 mb-2">المخزن *</label>
+                                    <select name="warehouseSelect" id="calcWarehouseSelect"
+                                        onchange="populateCalcProducts()"
+                                        class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-green-500 focus:outline-none">
+                                        <option value="">اختر المخزن</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-gray-400 mb-2">المنتج من المخزن *</label>
+                                    <select name="productSelect" id="calcProductSelect" onchange="loadProductPrice()"
+                                        class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-green-500 focus:outline-none">
+                                        <option value="">اختر المخزن أولاً</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                                <div>
+                                    <label class="block text-sm text-gray-400 mb-2">الكمية المستخدمة من المخزن *</label>
+                                    <input type="number" name="quantityUsed" required min="1"
+                                        class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-green-500 focus:outline-none"
+                                        placeholder="عدد الوحدات">
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-gray-400 mb-2">سعر شراء الوحدة من المخزن</label>
+                                    <input type="number" name="unitCost" readonly
+                                        class="w-full bg-gray-700 border border-gray-700 p-3 rounded-lg text-gray-400 cursor-not-allowed">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Price Calculation -->
+                        <div class="bg-gray-800/50 p-4 rounded-lg border border-gray-700">
+                            <h4 class="font-bold text-green-400 mb-3">حساب السعر</h4>
+                            <div>
+                                <label class="block text-sm text-gray-400 mb-2">سعر الشراء الإجمالي (ج.م) *</label>
+                                <input type="number" name="costPrice" required step="0.01"
+                                    class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-green-500 focus:outline-none"
+                                    placeholder="ادخل سعر الشراء">
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                                <div>
+                                    <label class="block text-sm text-gray-400 mb-2">نسبة الضريبة (%)</label>
+                                    <input type="number" name="taxRate" step="0.01" value="14"
+                                        class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-green-500 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-gray-400 mb-2">نسبة المصنعية (%)</label>
+                                    <input type="number" name="manufacturingRate" step="0.01"
+                                        class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-green-500 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-gray-400 mb-2">نسبة الربح (%)</label>
+                                    <input type="number" name="profitRate" step="0.01"
+                                        class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-green-500 focus:outline-none">
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="button" onclick="calculatePricePage()"
+                            class="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-bold transition">
+                            <i class="fas fa-calculator ml-2"></i>حساب السعر النهائي
+                        </button>
+                    </form>
+
+                    <!-- Calculation Result -->
+                    <div id="calculationResultPage" class="mt-6 hidden">
+                        <div class="bg-green-900/30 border border-green-700 p-6 rounded-lg">
+                            <h4 class="text-lg font-bold text-green-400 mb-4">نتيجة الحساب:</h4>
+                            <div class="space-y-3 text-right">
+                                <div class="flex justify-between items-center p-2 bg-gray-800 rounded">
+                                    <span class="text-gray-300">سعر الشراء:</span>
+                                    <span class="font-bold text-white" id="resultCostPrice">0.00</span>
+                                </div>
+                                <div class="flex justify-between items-center p-2 bg-gray-800 rounded">
+                                    <span class="text-gray-300">الضريبة (14%):</span>
+                                    <span class="font-bold text-orange-400" id="resultTax">0.00</span>
+                                </div>
+                                <div class="flex justify-between items-center p-2 bg-gray-800 rounded">
+                                    <span class="text-gray-300">المصنعية:</span>
+                                    <span class="font-bold text-orange-400" id="resultManufacturing">0.00</span>
+                                </div>
+                                <div class="flex justify-between items-center p-2 bg-gray-800 rounded">
+                                    <span class="text-gray-300">الربح:</span>
+                                    <span class="font-bold text-blue-400" id="resultProfit">0.00</span>
+                                </div>
+                                <div
+                                    class="flex justify-between items-center p-3 bg-gradient-to-r from-green-900 to-green-800 rounded-lg border border-green-600 mt-4">
+                                    <span class="text-lg font-bold text-green-300">السعر النهائي:</span>
+                                    <span class="text-3xl font-bold text-green-400" id="resultFinalPrice">0.00</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Info Section -->
+                <div class="lg:col-span-1 bg-gray-900 border border-gray-800 p-6 rounded-xl h-fit">
+                    <h3 class="text-lg font-bold mb-4 text-yellow-400">
+                        <i class="fas fa-user ml-2"></i>بيانات المحاسب
+                    </h3>
+                    <form id="calculatorUserForm" class="space-y-4">
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">الاسم *</label>
+                            <input type="text" name="userName" required
+                                class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-yellow-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">المنصب/الوظيفة *</label>
+                            <input type="text" name="userPosition" required
+                                class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-yellow-500 focus:outline-none"
+                                placeholder="مثلاً: محاسب، مدير مالي">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">رقم التليفون *</label>
+                            <input type="tel" name="userPhone" required
+                                class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-yellow-500 focus:outline-none">
+                        </div>
+                        <div class="bg-gray-800/60 p-3 rounded-lg border border-gray-700 text-xs text-gray-400">
+                            <p class="mb-2">التاريخ والوقت:</p>
+                            <p id="calculatorDateTime" class="font-mono text-yellow-300"></p>
+                        </div>
+                        <button type="button" onclick="savePriceCalculation()"
+                            class="w-full bg-yellow-600 hover:bg-yellow-700 text-white py-3 rounded-lg font-bold transition">
+                            <i class="fas fa-save ml-2"></i>حفظ الحساب
+                        </button>
+                    </form>
+
+                    <!-- Recent Calculations -->
+                    <div class="mt-6 pt-6 border-t border-gray-700">
+                        <h4 class="font-bold text-blue-400 mb-3">آخر الحسابات</h4>
+                        <div id="recentCalculationsList" class="space-y-2 max-h-64 overflow-y-auto custom-scrollbar">
+                            <!-- JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Finance Tab -->
+        <div id="finance" class="tab-content">
+            <h2 class="text-2xl font-bold mb-6 text-green-400 border-b border-gray-800 pb-2">الشؤون المالية والمحاسبة
+            </h2>
+            <div class="bg-gray-900 p-8 rounded-xl border border-gray-800 text-center">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                    <div class="p-6 bg-gray-800 rounded-xl border border-gray-700">
+                        <p class="text-sm text-gray-400 mb-2">إجمالي مبيعات اليوم</p>
+                        <p class="text-3xl font-bold text-green-400">0.00 ج.م</p>
+                    </div>
+                    <div class="p-6 bg-gray-800 rounded-xl border border-gray-700">
+                        <p class="text-sm text-gray-400 mb-2">مطالبات شركات التأمين</p>
+                        <p class="text-3xl font-bold text-blue-400">0.00 ج.م</p>
+                    </div>
+                    <div class="p-6 bg-gray-800 rounded-xl border border-gray-700">
+                        <p class="text-sm text-gray-400 mb-2">المصروفات النثرية</p>
+                        <p class="text-3xl font-bold text-red-400">0.00 ج.م</p>
+                    </div>
+                </div>
+                <button
+                    class="bg-gray-800 hover:bg-gray-700 border border-gray-600 px-8 py-3 rounded-lg font-bold transition">إصدار
+                    تقرير مالي شامل</button>
+            </div>
+
+
+        </div>
+
+        <!-- Clients List Tab -->
+        <div id="clients" class="tab-content">
+            <h2 class="text-2xl font-bold mb-6 border-b border-gray-800 pb-2">قاعدة بيانات العملاء</h2>
+
+            <div class="bg-gray-900 p-4 rounded-lg border border-gray-800 mb-6 flex gap-4">
+                <div class="relative flex-1">
+                    <i class="fas fa-search absolute right-3 top-3 text-gray-500"></i>
+                    <input type="text" id="clientSearch" oninput="renderClients()"
+                        placeholder="بحث باسم العميل، الهاتف، أو الكود..."
+                        class="w-full bg-gray-800 border border-gray-700 p-2 pr-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <button onclick="showTab('add-client')"
+                    class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition whitespace-nowrap"><i
+                        class="fas fa-plus ml-2"></i>إضافة جديد</button>
+            </div>
+
+            <div class="overflow-x-auto bg-gray-900 rounded-lg border border-gray-800">
+                <table class="w-full text-right border-collapse">
+                    <thead>
+                        <tr class="bg-gray-800 border-b border-gray-700 text-gray-400 text-sm">
+                            <th class="p-4">كود العميل</th>
+                            <th class="p-4">الاسم بالكامل</th>
+                            <th class="p-4">الهاتف</th>
+                            <th class="p-4">النوع</th>
+                            <th class="p-4">المحافظة</th>
+                            <th class="p-4">الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="clientsTableBody" class="text-sm">
+                        <!-- Loaded via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Cars List Tab -->
+        <div id="cars" class="tab-content">
+            <h2 class="text-2xl font-bold mb-6 border-b border-gray-800 pb-2">قاعدة بيانات السيارات</h2>
+
+            <div class="bg-gray-900 p-4 rounded-lg border border-gray-800 mb-6 flex gap-4">
+                <div class="relative flex-1">
+                    <i class="fas fa-search absolute right-3 top-3 text-gray-500"></i>
+                    <input type="text" id="carSearch" oninput="renderCars()"
+                        placeholder="بحث برقم الشاسيه، اللوحة، أو كود المالك..."
+                        class="w-full bg-gray-800 border border-gray-700 p-2 pr-10 rounded-lg">
+                </div>
+                <button onclick="showTab('add-car')"
+                    class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg transition whitespace-nowrap"><i
+                        class="fas fa-plus ml-2"></i>إضافة سيارة</button>
+            </div>
+
+            <div class="overflow-x-auto bg-gray-900 rounded-lg border border-gray-800">
+                <table class="w-full text-right border-collapse">
+                    <thead>
+                        <tr class="bg-gray-800 border-b border-gray-700 text-gray-400 text-sm">
+                            <th class="p-4">السيارة</th>
+                            <th class="p-4">رقم الشاسيه</th>
+                            <th class="p-4">اللوحة</th>
+                            <th class="p-4">كود المالك</th>
+                            <th class="p-4">المحرك</th>
+                            <th class="p-4">الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="carsTableBody" class="text-sm">
+                        <!-- Loaded via JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Code Explanation Section -->
+            <div class="mt-8 bg-gray-900 border border-gray-800 p-6 rounded-xl">
+                <h3 class="text-lg font-bold text-blue-400 mb-3"><i class="fas fa-info-circle ml-2"></i>شرح كود العميل
+                </h3>
+                <div class="text-sm">
+                    <div class="bg-gray-800 p-4 rounded-lg">
+                        <p class="font-bold text-green-400 mb-2">كود العميل (Client Code): <span
+                                class="font-mono">C-12345</span></p>
+                        <ul class="list-disc list-inside text-gray-300 space-y-1 mr-2">
+                            <li><span class="font-mono">C</span>: يرمز إلى أن الكود مخصص لعميل (Customer).</li>
+                            <li><span class="font-mono">12345</span>: رقم تعريفي فريد للعميل.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Warehouses Tab -->
+        <div id="warehouses" class="tab-content">
+            <div class="mb-6 border-b border-gray-800 pb-2">
+                <h2 class="text-2xl font-bold text-purple-400">فتح مخزن</h2>
+                <p class="text-gray-400 text-sm mt-1">اختر المخزن لعرض المنتجات الموجودة بداخله. (إضافة المخازن تتم من
+                    صفحة المنتجات.)</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-1 bg-gray-900 border border-gray-800 p-6 rounded-xl">
+                    <h3 class="text-lg font-bold mb-3">اختيار المخزن</h3>
+                    <label class="block text-xs text-gray-400 mb-2">المخزن</label>
+                    <select id="warehouseOpenSelect" onchange="openWarehouseView()"
+                        class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-purple-500 focus:outline-none transition">
+                        <option value="">اختر مخزن...</option>
+                    </select>
+
+                    <div id="warehouseOpenMeta" class="mt-4 hidden">
+                        <div class="bg-gray-800/60 border border-gray-700 rounded-lg p-4 text-sm">
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-400">الاسم</span>
+                                <span id="warehouseMetaName" class="font-bold text-white"></span>
+                            </div>
+                            <div class="flex items-center justify-between mt-2">
+                                <span class="text-gray-400">الموقع</span>
+                                <span id="warehouseMetaLocation" class="font-mono text-purple-300"></span>
+                            </div>
+                            <div class="flex items-center justify-between mt-2">
+                                <span class="text-gray-400">عدد الأصناف</span>
+                                <span id="warehouseMetaCount" class="font-bold text-green-400"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-2 bg-gray-900 border border-gray-800 p-6 rounded-xl">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
+                        <h3 class="text-xl font-bold text-white">منتجات المخزن</h3>
+                        <input type="text" id="warehouseInventorySearch" oninput="renderWarehouseInventory()"
+                            placeholder="بحث داخل هذا المخزن..."
+                            class="bg-gray-800 border border-gray-700 p-2 rounded-lg text-sm w-full md:w-72">
+                    </div>
+
+                    <div id="warehouseNotSelected"
+                        class="text-center text-gray-400 py-10 border border-dashed border-gray-700 rounded-xl">
+                        اختر مخزن من القائمة لعرض المنتجات.
+                    </div>
+
+                    <div id="warehouseInventoryTableWrap" class="hidden overflow-x-auto">
+                        <table class="w-full text-right border-collapse">
+                            <thead>
+                                <tr class="bg-gray-800 border-b border-gray-700 text-gray-400 text-sm">
+                                    <th class="p-3">كود المنتج</th>
+                                    <th class="p-3">اسم المنتج</th>
+                                    <th class="p-3">الكمية</th>
+                                    <th class="p-3">السعر</th>
+                                </tr>
+                            </thead>
+                            <tbody id="warehouseInventoryTableBody" class="text-sm">
+                                <!-- JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Workshop Tab -->
+        <div id="workshop" class="tab-content">
+            <div
+                class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6 border-b border-gray-800 pb-4">
+                <h2 class="text-2xl font-bold text-sky-400">
+                    <i class="fas fa-screwdriver-wrench ml-2"></i>الورشة
+                </h2>
+                <div class="text-xs text-gray-400">إدارة الورش/الأقسام الفنية وإسناد الأعمال</div>
+            </div>
+
+            <!-- Workshop Quick Actions -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div
+                    class="bg-gray-900 p-6 rounded-xl border border-gray-800 hover:border-orange-500 transition cursor-pointer group flex items-center justify-between shadow-lg hover:shadow-orange-900/20">
+                    <div>
+                        <h3 class="text-2xl font-bold text-orange-400">طلب قطع غيار</h3>
+                        <p class="text-sm text-gray-400 mt-1">Spare Parts Request</p>
+                        <p class="text-xs text-orange-300 mt-2 font-bold">اضغط للعرض <i
+                                class="fas fa-arrow-left mr-1"></i></p>
+                    </div>
+                    <div class="bg-orange-500/10 p-4 rounded-full">
+                        <i
+                            class="fas fa-cogs text-4xl text-orange-500 group-hover:rotate-180 transition-transform duration-700"></i>
+                    </div>
+                </div>
+
+                <div
+                    class="bg-gray-900 p-6 rounded-xl border border-gray-800 hover:border-sky-500 transition cursor-pointer group flex items-center justify-between shadow-lg hover:shadow-sky-900/20">
+                    <div>
+                        <h3 class="text-2xl font-bold text-sky-400">التحميل</h3>
+                        <p class="text-sm text-gray-400 mt-1">LOADING</p>
+                        <p class="text-xs text-sky-300 mt-2 font-bold">اضغط للعرض <i class="fas fa-arrow-left mr-1"></i>
+                        </p>
+                    </div>
+                    <div class="bg-sky-500/10 p-4 rounded-full">
+                        <i
+                            class="fas fa-truck-loading text-4xl text-sky-400 group-hover:translate-x-1 transition-transform duration-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- HR Tab -->
+        <div id="hr" class="tab-content">
+            <div
+                class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6 border-b border-gray-800 pb-4">
+                <h2 class="text-2xl font-bold text-indigo-400">
+                    <i class="fas fa-users ml-2"></i>الموارد البشرية (HR)
+                </h2>
+                <div class="text-xs text-gray-400">إدارة شؤون الموظفين والحضور والغياب</div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div onclick="showTab('add-employee')"
+                    class="bg-gray-900 p-8 rounded-2xl border border-gray-800 hover:border-green-500 transition cursor-pointer group hover:shadow-xl hover:shadow-green-900/20">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-2xl font-bold text-green-400">إنشاء موظف</h3>
+                        <i
+                            class="fas fa-user-plus text-4xl text-green-500 group-hover:scale-110 transition-transform"></i>
+                    </div>
+                    <p class="text-sm text-gray-400">Create Employee</p>
+                    <div class="mt-4 text-green-400 text-sm font-bold">اضغط للدخول <i
+                            class="fas fa-arrow-left mr-2"></i></div>
+                </div>
+
+                <div onclick="showTab('attendance')"
+                    class="bg-gray-900 p-8 rounded-2xl border border-gray-800 hover:border-indigo-500 transition cursor-pointer group hover:shadow-xl hover:shadow-indigo-900/20">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-2xl font-bold text-indigo-400">الحضور والغياب</h3>
+                        <i
+                            class="fas fa-clipboard-check text-4xl text-indigo-500 group-hover:scale-110 transition-transform"></i>
+                    </div>
+                    <p class="text-sm text-gray-400">Attendance</p>
+                    <div class="mt-4 text-indigo-400 text-sm font-bold">اضغط للدخول <i
+                            class="fas fa-arrow-left mr-2"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Employee Page -->
+        <div id="add-employee" class="tab-content">
+            <div class="flex items-center gap-4 mb-6 border-b border-gray-800 pb-4">
+                <button onclick="showTab('hr')"
+                    class="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition">
+                    <i class="fas fa-arrow-right ml-2"></i>رجوع
+                </button>
+                <h2 class="text-2xl font-bold text-green-400">
+                    <i class="fas fa-user-tie ml-2"></i>إنشاء موظف جديد
+                </h2>
+            </div>
+            <div class="bg-gray-900 border border-gray-800 p-6 md:p-8 rounded-xl shadow-2xl max-w-3xl mx-auto">
+                <form id="employeeForm" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">اسم الموظف الكامل *</label>
+                            <input type="text" name="fullName" required
+                                class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-green-500 focus:outline-none transition">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">رقم التليفون *</label>
+                            <input type="tel" name="phone" required
+                                class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-green-500 focus:outline-none transition">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">الرقم القومي (14 رقم) *</label>
+                            <input type="text" name="nationalId" required minlength="14" maxlength="14"
+                                class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-green-500 focus:outline-none transition">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">الوظيفة *</label>
+                            <select name="jobTitle" required
+                                class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-green-500 focus:outline-none transition">
+                                <option value="">اختر الوظيفة</option>
+                                <option value="مدير الصيانة">مدير الصيانة</option>
+                                <option value="مدير الورشة">مدير الورشة</option>
+                                <option value="مدير الاستقبال">مدير الاستقبال</option>
+                                <option value="مدير قطع الغيار">مدير قطع الغيار</option>
+                                <option value="مهندس الاستقبال">مهندس الاستقبال</option>
+                                <option value="مهندس الورشة">مهندس الورشة</option>
+                                <option value="فني مكانيكا">فني مكانيكا</option>
+                                <option value="فني كهرباء">فني كهرباء</option>
+                                <option value="فني سمكرة">فني سمكرة</option>
+                                <option value="فني فك و تركيب">فني فك و تركيب</option>
+                                <option value="فني دهان">فني دهان</option>
+                                <option value="أمين مخزن قطع غيار">أمين مخزن قطع غيار</option>
+                                <option value="مساعد أمين مخزن قطع غيار">مساعد أمين مخزن قطع غيار</option>
+                                <option value="مسؤول خدمة عملاء">مسؤول خدمة عملاء</option>
+                                <option value="مسؤول تحميل ورش">مسؤول تحميل ورش</option>
+                                <option value="مراقب جودة">مراقب جودة</option>
+                                <option value="محاسب">محاسب</option>
+                                <option value="مدير حسابات">مدير حسابات</option>
+                                <option value="مسؤول موارد بشرية">مسؤول موارد بشرية</option>
+                                <option value="عامل نظافة">عامل نظافة</option>
+                                <option value="عامل بوفيه">عامل بوفيه</option>
+                                <option value="عامل أمن">عامل أمن</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">المرتب الشهري (ج.م) *</label>
+                            <input type="number" name="monthlySalary" required min="0" step="1"
+                                class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-green-500 focus:outline-none transition"
+                                placeholder="مثلاً: 6000">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">العنوان بالتفصيل *</label>
+                            <input type="text" name="address" required
+                                class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-green-500 focus:outline-none transition"
+                                placeholder="المحافظة، الحي، الشارع...">
+                        </div>
+                    </div>
+
+                    <!-- Hiring Documents -->
+                    <div class="bg-gray-800/40 border border-gray-700 p-4 rounded-xl">
+                        <h3 class="text-sm font-bold text-blue-400 mb-4 border-b border-gray-700 pb-2">
+                            <i class="fas fa-file-invoice ml-2"></i>مسوغات التعيين (الأوراق المستلمة)
+                        </h3>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block text-[11px] text-gray-500 mb-1">نوع الموظف (لتحديد الأوراق)</label>
+                                <select name="gender" id="empGender" onchange="toggleRecruitmentField()"
+                                    class="w-full bg-gray-900 border border-gray-700 p-2 rounded text-sm focus:border-blue-500 outline-none">
+                                    <option value="male">ذكر</option>
+                                    <option value="female">أنثى</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                            <label
+                                class="flex items-center gap-2 bg-gray-900/50 p-2 rounded border border-gray-800 cursor-pointer hover:border-blue-500 transition">
+                                <input type="checkbox" name="doc_id" class="w-4 h-4 rounded text-blue-600">
+                                <span class="text-xs">صورة البطاقة</span>
+                            </label>
+                            <label
+                                class="flex items-center gap-2 bg-gray-900/50 p-2 rounded border border-gray-800 cursor-pointer hover:border-blue-500 transition">
+                                <input type="checkbox" name="doc_birth" class="w-4 h-4 rounded text-blue-600">
+                                <span class="text-xs">أصل شهادة الميلاد</span>
+                            </label>
+                            <label
+                                class="flex items-center gap-2 bg-gray-900/50 p-2 rounded border border-gray-800 cursor-pointer hover:border-blue-500 transition">
+                                <input type="checkbox" name="doc_edu" class="w-4 h-4 rounded text-blue-600">
+                                <span class="text-xs">أصل المؤهل الدراسي</span>
+                            </label>
+                            <label id="militaryField"
+                                class="flex items-center gap-2 bg-gray-900/50 p-2 rounded border border-gray-800 cursor-pointer hover:border-blue-500 transition">
+                                <input type="checkbox" name="doc_military" class="w-4 h-4 rounded text-blue-600">
+                                <span class="text-xs">أصل الموقف من التجنيد</span>
+                            </label>
+                            <label
+                                class="flex items-center gap-2 bg-gray-900/50 p-2 rounded border border-gray-800 cursor-pointer hover:border-blue-500 transition">
+                                <input type="checkbox" name="doc_form6" class="w-4 h-4 rounded text-blue-600">
+                                <span class="text-xs">نموذج 6 (جهة سابقة)</span>
+                            </label>
+                            <label
+                                class="flex items-center gap-2 bg-gray-900/50 p-2 rounded border border-gray-800 cursor-pointer hover:border-blue-500 transition">
+                                <input type="checkbox" name="doc_ins" class="w-4 h-4 rounded text-blue-600">
+                                <span class="text-xs">طابعة تأمينية</span>
+                            </label>
+                            <label
+                                class="flex items-center gap-2 bg-gray-900/50 p-2 rounded border border-gray-800 cursor-pointer hover:border-blue-500 transition">
+                                <input type="checkbox" name="doc_conduct" class="w-4 h-4 rounded text-blue-600">
+                                <span class="text-xs">استمارة حسن سير وسلوك</span>
+                            </label>
+                            <label
+                                class="flex items-center gap-2 bg-gray-900/50 p-2 rounded border border-gray-800 cursor-pointer hover:border-blue-500 transition">
+                                <input type="checkbox" name="doc_eng" class="w-4 h-4 rounded text-blue-600">
+                                <span class="text-xs">كارنيه النقابة الهندسية</span>
+                            </label>
+                            <label
+                                class="flex items-center gap-2 bg-gray-900/50 p-2 rounded border border-gray-800 cursor-pointer hover:border-blue-500 transition">
+                                <input type="checkbox" name="doc_tech" class="w-4 h-4 rounded text-blue-600">
+                                <span class="text-xs">كارنيه مزاولة المهنة</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit"
+                        class="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-500 hover:to-green-600 text-white py-3 rounded-xl font-bold text-lg shadow-lg hover:shadow-green-900/50 transition transform hover:-translate-y-1">
+                        <i class="fas fa-save ml-2"></i>حفظ الموظف واستخراج كود
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Attendance Page -->
+        <div id="attendance" class="tab-content">
+            <div class="flex items-center gap-4 mb-6 border-b border-gray-800 pb-4">
+                <button onclick="showTab('hr')"
+                    class="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition">
+                    <i class="fas fa-arrow-right ml-2"></i>رجوع
+                </button>
+                <h2 class="text-2xl font-bold text-indigo-400">
+                    <i class="fas fa-clipboard-check ml-2"></i>الحضور والغياب
+                </h2>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-1 bg-gray-900 border border-gray-800 p-6 rounded-xl">
+                    <h3 class="text-lg font-bold text-white mb-4">تسجيل حضور/غياب</h3>
+                    <form id="attendanceForm" class="space-y-4">
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">الموظف *</label>
+                            <select name="employeeCode" id="attendanceEmployeeSelect" required
+                                class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-indigo-500 focus:outline-none transition">
+                                <option value="">اختر الموظف</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">النوع *</label>
+                            <select name="type" required
+                                class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-indigo-500 focus:outline-none transition">
+                                <option value="">اختر</option>
+                                <option value="حضور">حضور</option>
+                                <option value="غياب">غياب</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">ملاحظات</label>
+                            <textarea name="notes" rows="3"
+                                class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-indigo-500 focus:outline-none transition"></textarea>
+                        </div>
+                        <button type="submit"
+                            class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-lg font-bold transition">
+                            <i class="fas fa-save ml-2"></i>حفظ
+                        </button>
+                    </form>
+                </div>
+
+                <div class="lg:col-span-2 bg-gray-900 border border-gray-800 p-6 rounded-xl">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
+                        <h3 class="text-xl font-bold text-white">سجل الحضور والغياب</h3>
+                        <input type="text" id="attendanceSearch" oninput="renderAttendance()"
+                            placeholder="بحث بالاسم/الكود/النوع..."
+                            class="bg-gray-800 border border-gray-700 p-2 rounded-lg text-sm w-full md:w-80">
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right border-collapse">
+                            <thead>
+                                <tr class="bg-gray-800 border-b border-gray-700 text-gray-400 text-sm">
+                                    <th class="p-3">#</th>
+                                    <th class="p-3">الموظف</th>
+                                    <th class="p-3">النوع</th>
+                                    <th class="p-3">الخصم (يوم)</th>
+                                    <th class="p-3">ملاحظات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="attendanceTableBody" class="text-sm">
+                                <!-- JS -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="mt-6 bg-gray-800/60 border border-gray-700 p-4 rounded-lg text-sm">
+                        <p class="font-bold text-indigo-300 mb-2">تنبيه الخصم:</p>
+                        <ul class="list-disc list-inside text-gray-300 space-y-1">
+                            <li>عند تسجيل <span class="text-red-300 font-bold">غياب</span> يتم خصم <span
+                                    class="font-bold">يوم واحد</span> من مرتب الموظف (المرتب ÷ 30).</li>
+                            <li>الخصم يظهر في الجدول بالعملة (ج.م).</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Tab (Home) -->
+        <div id="settings" class="tab-content">
+            <h2 class="text-2xl font-bold mb-6 border-b border-gray-800 pb-2 text-red-400">صفحة التعديل والإعدادات</h2>
+
+            <!-- أزرار تفتح صفحات منفصلة -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <button onclick="showTab('settings-brands')"
+                    class="bg-blue-600 hover:bg-blue-700 text-white p-5 rounded-2xl font-bold transition flex items-center justify-center gap-3 shadow-lg">
+                    <i class="fas fa-car"></i>
+                    تعديل السيارات
+                </button>
+                <button onclick="showTab('settings-body-types')"
+                    class="bg-purple-600 hover:bg-purple-700 text-white p-5 rounded-2xl font-bold transition flex items-center justify-center gap-3 shadow-lg">
+                    <i class="fas fa-car-side"></i>
+                    أنواع العربيات
+                </button>
+                <button onclick="showTab('settings-insurance')"
+                    class="bg-green-600 hover:bg-green-700 text-white p-5 rounded-2xl font-bold transition flex items-center justify-center gap-3 shadow-lg">
+                    <i class="fas fa-building"></i>
+                    تعديل شركات التأمين
+                </button>
+                <button onclick="showTab('settings-banks')"
+                    class="bg-teal-600 hover:bg-teal-700 text-white p-5 rounded-2xl font-bold transition flex items-center justify-center gap-3 shadow-lg">
+                    <i class="fas fa-university"></i>
+                    تعديل البنوك
+                </button>
+            </div>
+
+            <div class="mt-6 bg-gray-900 border border-gray-800 p-5 rounded-xl text-sm text-gray-300">
+                اختر القسم الذي تريد تعديله من الأزرار بالأعلى.
+            </div>
+        </div>
+
+        <!-- Settings: Body Types Page -->
+        <div id="settings-body-types" class="tab-content">
+            <div class="flex items-center gap-4 mb-6 border-b border-gray-800 pb-4">
+                <button onclick="showTab('settings')"
+                    class="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition">
+                    <i class="fas fa-arrow-right ml-2"></i>رجوع
+                </button>
+                <h2 class="text-2xl font-bold text-purple-400"><i class="fas fa-car-side ml-2"></i>تعديل أنواع العربيات
+                </h2>
+            </div>
+
+            <div id="bodyTypes-settings" class="animate-fadeIn">
+                <div class="bg-gray-900 p-6 rounded-lg border border-gray-800">
+                    <h3 class="text-xl font-semibold mb-4 text-purple-400 flex justify-between items-center">
+                        <span>إدارة أنواع العربيات (الهيكل)</span>
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="bg-gray-800 p-4 rounded-lg border border-gray-700">
+                            <label class="block text-xs text-gray-400 mb-2">إضافة نوع جديد</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="newBodyTypeName" placeholder="اسم النوع (مثلاً: سيدان)"
+                                    class="flex-1 bg-gray-900 border border-gray-600 p-3 rounded text-sm focus:border-purple-500 focus:outline-none">
+                                <button onclick="addBodyType()"
+                                    class="bg-purple-600 px-6 py-2 rounded font-bold hover:bg-purple-700 transition">إضافة
+                                    النوع</button>
+                            </div>
+                        </div>
+                        <div id="bodyTypesList"
+                            class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4 max-h-[600px] overflow-y-auto custom-scrollbar p-2">
+                            <!-- JS سيقوم بإنشاء الكروت هنا -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings: Brands Page -->
+        <div id="settings-brands" class="tab-content">
+            <div class="flex items-center gap-4 mb-6 border-b border-gray-800 pb-4">
+                <button onclick="showTab('settings')"
+                    class="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition">
+                    <i class="fas fa-arrow-right ml-2"></i>رجوع
+                </button>
+                <h2 class="text-2xl font-bold text-blue-400"><i class="fas fa-car-side ml-2"></i>تعديل السيارات</h2>
+            </div>
+
+            <div id="brands-settings" class="animate-fadeIn">
+                <div class="bg-gray-900 p-6 rounded-lg border border-gray-800">
+                    <h3 class="text-xl font-semibold mb-4 text-blue-400 flex justify-between items-center">
+                        <span>إدارة ماركات السيارات والموديلات وسعة المحرك</span>
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="bg-gray-800 p-4 rounded-lg border border-gray-700">
+                            <label class="block text-xs text-gray-400 mb-2">إضافة ماركة جديدة</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="newBrandName" placeholder="اسم الماركة (مثلاً: تويوتا)"
+                                    class="flex-1 bg-gray-900 border border-gray-600 p-3 rounded text-sm focus:border-blue-500 focus:outline-none">
+                                <button onclick="addBrand()"
+                                    class="bg-blue-600 px-6 py-2 rounded font-bold hover:bg-blue-700 transition">إضافة
+                                    الماركة</button>
+                            </div>
+                        </div>
+                        <div id="brandsList"
+                            class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[600px] overflow-y-auto custom-scrollbar p-2">
+                            <!-- JS سيقوم بإنشاء الكروت هنا -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings: Insurance Page -->
+        <div id="settings-insurance" class="tab-content">
+            <div class="flex items-center gap-4 mb-6 border-b border-gray-800 pb-4">
+                <button onclick="showTab('settings')"
+                    class="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition">
+                    <i class="fas fa-arrow-right ml-2"></i>رجوع
+                </button>
+                <h2 class="text-2xl font-bold text-green-400"><i class="fas fa-building ml-2"></i>تعديل شركات التأمين
+                </h2>
+            </div>
+
+            <div id="insurance-settings" class="animate-fadeIn">
+                <div class="bg-gray-900 p-6 rounded-lg border border-gray-800">
+                    <h3 class="text-xl font-semibold mb-4 text-green-400">إدارة شركات التأمين</h3>
+                    <div class="space-y-4">
+                        <div class="bg-gray-800 p-4 rounded-lg border border-gray-700">
+                            <label class="block text-xs text-gray-400 mb-2">إضافة شركة تأمين جديدة</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="newInsuranceName" placeholder="اسم الشركة"
+                                    class="flex-1 bg-gray-900 border border-gray-600 p-3 rounded text-sm focus:border-green-500 focus:outline-none">
+                                <button onclick="addInsurance()"
+                                    class="bg-green-600 px-6 py-2 rounded font-bold hover:bg-green-700 transition">إضافة
+                                    الشركة</button>
+                            </div>
+                        </div>
+                        <div id="insurancesList"
+                            class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3 max-h-[600px] overflow-y-auto custom-scrollbar p-2">
+                            <!-- JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings: Banks Page -->
+        <div id="settings-banks" class="tab-content">
+            <div class="flex items-center gap-4 mb-6 border-b border-gray-800 pb-4">
+                <button onclick="showTab('settings')"
+                    class="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition">
+                    <i class="fas fa-arrow-right ml-2"></i>رجوع
+                </button>
+                <h2 class="text-2xl font-bold text-teal-400"><i class="fas fa-university ml-2"></i>تعديل البنوك</h2>
+            </div>
+
+            <div id="banks-settings" class="animate-fadeIn">
+                <div class="bg-gray-900 p-6 rounded-lg border border-gray-800">
+                    <h3 class="text-xl font-semibold mb-4 text-teal-400">إدارة البنوك</h3>
+                    <div class="space-y-4">
+                        <div class="bg-gray-800 p-4 rounded-lg border border-gray-700">
+                            <label class="block text-xs text-gray-400 mb-2">إضافة بنك جديد</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="newBankName" placeholder="اسم البنك"
+                                    class="flex-1 bg-gray-900 border border-gray-600 p-3 rounded text-sm focus:border-teal-500 focus:outline-none">
+                                <button onclick="addBank()"
+                                    class="bg-teal-600 px-6 py-2 rounded font-bold hover:bg-teal-700 transition">إضافة
+                                    البنك</button>
+                            </div>
+                        </div>
+                        <div id="banksList"
+                            class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3 max-h-[600px] overflow-y-auto custom-scrollbar p-2">
+                            <!-- JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Employee Stats Modal -->
+    <div id="employeeStatsModal" class="fixed inset-0 bg-black/90 flex items-center justify-center p-4 z-[100] hidden">
+        <div
+            class="bg-gray-900 border border-indigo-500 p-6 rounded-2xl w-full max-w-2xl shadow-2xl overflow-y-auto max-h-[90vh]">
+            <div class="flex justify-between items-center mb-6 border-b border-gray-800 pb-4">
+                <h3 class="text-2xl font-bold text-white">إحصائيات الموظف</h3>
+                <button onclick="closeStatsModal()" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+            </div>
+
+            <div id="statsContent" class="space-y-6">
+                <!-- JS Populated -->
+            </div>
+
+            <button onclick="closeStatsModal()"
+                class="w-full mt-6 bg-gray-800 hover:bg-gray-700 py-3 rounded-xl font-bold transition">إغلاق</button>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="fixed inset-0 bg-black/90 flex items-center justify-center p-4 z-[100] hidden">
+        <div
+            class="bg-gray-900 border border-green-500 p-8 rounded-2xl w-full max-w-lg shadow-2xl text-center transform scale-100 transition-transform">
+            <div class="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-check text-4xl text-green-500"></i>
+            </div>
+            <h3 class="text-2xl font-bold mb-2 text-white">تمت العملية بنجاح!</h3>
+            <p id="successMessage" class="text-gray-300 mb-6">تم تسجيل البيانات بنجاح في النظام.</p>
+
+            <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 mb-6">
+                <p class="text-sm text-gray-400 mb-1">الرقم التعريفي (هام جداً)</p>
+                <div class="flex items-center justify-center gap-4">
+                    <span id="generatedCode"
+                        class="text-4xl font-mono font-bold text-blue-400 tracking-wider">C-0000</span>
+                    <button onclick="copyGeneratedCode()" class="text-gray-500 hover:text-white transition"
+                        title="نسخ الكود">
+                        <i class="far fa-copy text-xl"></i>
+                    </button>
+                </div>
+            </div>
+
+            <button onclick="closeSuccessModal()"
+                class="w-full bg-green-600 hover:bg-green-700 py-3 rounded-xl font-bold transition">حسناً، فهمت</button>
+        </div>
+    </div>
+
+    <!-- Warehouse Modal -->
+    <div id="warehouseFormModal" class="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-[100] hidden">
+        <div class="bg-gray-900 border border-gray-800 p-6 rounded-xl w-full max-w-md shadow-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold">إضافة مخزن جديد</h3>
+                <button onclick="document.getElementById('warehouseFormModal').classList.add('hidden')"
+                    class="text-gray-400 hover:text-white text-2xl">&times;</button>
+            </div>
+            <form id="warehouseForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm mb-1 text-gray-400">اسم المخزن *</label>
+                    <input type="text" name="name" required
+                        class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-purple-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm mb-1 text-gray-400">الموقع / العنوان *</label>
+                    <input type="text" name="location" required
+                        class="w-full bg-gray-800 border border-gray-700 p-3 rounded-lg focus:border-purple-500 focus:outline-none"
+                        placeholder="مثال: A B etc">
+                </div>
+                <button type="submit"
+                    class="w-full bg-purple-600 hover:bg-purple-700 py-3 rounded-lg font-bold transition">حفظ
+                    المخزن</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Data Structures
+        let state = {
+            clients: JSON.parse(localStorage.getItem('dealership_clients')) || [],
+            cars: JSON.parse(localStorage.getItem('dealership_cars')) || [],
+            warehouses: JSON.parse(localStorage.getItem('dealership_warehouses')) || [],
+            inventory: JSON.parse(localStorage.getItem('dealership_inventory')) || [],
+            workOrders: JSON.parse(localStorage.getItem('dealership_work_orders')) || [],
+            maintenanceBookings: JSON.parse(localStorage.getItem('dealership_maintenance_bookings')) || [],
+            workshops: JSON.parse(localStorage.getItem('dealership_workshops')) || [],
+            attendance: JSON.parse(localStorage.getItem('dealership_attendance')) || [],
+            employees: JSON.parse(localStorage.getItem('dealership_employees')) || [],
+            banks: JSON.parse(localStorage.getItem('dealership_banks')) || ['البنك الأهلي المصري', 'بنك مصر', 'بنك القاهرة', 'البنك التجاري الدولي (CIB)', 'بنك الإسكندرية', 'بنك QNB الأهلي'],
+            bodyTypes: JSON.parse(localStorage.getItem('dealership_body_types')) || [
+                'سيدان',
+                'كروس أوفر',
+                'SUV',
+                'هاتشباك',
+                'كوبيه',
+                'بيك أب',
+                'فان',
+                'ميني فان',
+                'واجون',
+                'مكشوفة'
+            ],
+            brands: JSON.parse(localStorage.getItem('dealership_brands')) || [
+                { name: 'تويوتا (Toyota)', models: ['كورولا', 'كامري', 'فورتشنر', 'ياريس', 'لاند كروزر'], engines: ['1300', '1500', '1600', '1800', '2000', '2500', '2700', '4000'] },
+                { name: 'هيونداي (Hyundai)', models: ['إلنترا', 'توسان', 'أكسنت', 'كريتا', 'سانتا في'], engines: ['1400', '1600', '2000'] },
+                { name: 'كيا (Kia)', models: ['سبورتج', 'سيراتو', 'بيكانتو', 'سورينتو'], engines: ['1200', '1600', '2000', '2400'] },
+                { name: 'مرسيدس (Mercedes)', models: ['C-Class', 'E-Class', 'S-Class', 'GLC', 'GLE'], engines: ['1500', '1600', '2000', '3000'] },
+                { name: 'بي إم دبليو (BMW)', models: ['3 Series', '5 Series', '7 Series', 'X3', 'X5'], engines: ['1500', '1600', '2000', '3000'] },
+                { name: 'نيسان (Nissan)', models: ['صني', 'قشقاي', 'سنترا', 'جوك', 'باترول'], engines: ['1500', '1600', '2000', '2500'] },
+                { name: 'سكودا (Skoda)', models: ['أوكتافيا', 'كودياك', 'سوبرب'], engines: ['1400', '1600', '2000'] },
+                { name: 'فولكس فاجن (VW)', models: ['جولف', 'تيجوان', 'باسات'], engines: ['1400', '1600', '2000'] },
+                { name: 'شيري (Chery)', models: ['تيجو 7', 'تيجو 8', 'أريزو 5'], engines: ['1500', '1600'] },
+                { name: 'م جي (MG)', models: ['MG 5', 'MG 6', 'ZS', 'RX5'], engines: ['1500'] }
+            ],
+            insurances: JSON.parse(localStorage.getItem('dealership_insurances')) || [
+                'شركة مصر للتأمين', 'مصر للتأمينات الحياة', 'قناة السويس للتأمين', 'المهندس للتأمين', 'أورينت للتأمين التكافلي',
+                'أكسا للتأمين - مصر', 'أليانز للتأمين', 'جي آي جي للتأمين (GIG)', 'الدلتا للتأمين', 'رويال للتأمين',
+                'ثروة للتأمين', 'طوكيو مارين فورشور', 'بيت التأمين المصري السعودي', 'المصرية للتأمين التكافلي', 'أمان للتأمين'
+            ]
+        };
+
+        function saveData() {
+            localStorage.setItem('dealership_clients', JSON.stringify(state.clients));
+            localStorage.setItem('dealership_cars', JSON.stringify(state.cars));
+            localStorage.setItem('dealership_warehouses', JSON.stringify(state.warehouses));
+            localStorage.setItem('dealership_inventory', JSON.stringify(state.inventory));
+            localStorage.setItem('dealership_work_orders', JSON.stringify(state.workOrders));
+            localStorage.setItem('dealership_maintenance_bookings', JSON.stringify(state.maintenanceBookings));
+            localStorage.setItem('dealership_workshops', JSON.stringify(state.workshops));
+            localStorage.setItem('dealership_attendance', JSON.stringify(state.attendance));
+            localStorage.setItem('dealership_employees', JSON.stringify(state.employees));
+            localStorage.setItem('dealership_brands', JSON.stringify(state.brands));
+            localStorage.setItem('dealership_insurances', JSON.stringify(state.insurances));
+            localStorage.setItem('dealership_banks', JSON.stringify(state.banks));
+            localStorage.setItem('dealership_body_types', JSON.stringify(state.bodyTypes));
+        }
+
+        // دالة فارغة للتوافق مع الكود القديم (لم تعد مستخدمة)
+        function toggleReceptionSection(section) {
+            // تم استبدالها بصفحات منفصلة
+        }
+
+        // Navigation
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active-tab'));
+
+            const tabElement = document.getElementById(tabId);
+
+            // For nested settings pages, keep settings tab highlighted
+            const isSettingsChild = ['settings-brands', 'settings-body-types', 'settings-insurance', 'settings-banks'].includes(tabId);
+            const navId = isSettingsChild ? 'tab-settings' : ('tab-' + tabId);
+            const navElement = document.getElementById(navId);
+
+            if (tabElement) tabElement.classList.add('active');
+            if (navElement) navElement.classList.add('active-tab');
+
+            // Save state
+            localStorage.setItem('dealership_active_tab', tabId);
+
+            // Initialization actions when entering a tab
+            if (tabId === 'settings' || isSettingsChild) renderSettings();
+            if (tabId === 'clients') renderClients();
+            if (tabId === 'cars') renderCars();
+            if (tabId === 'warehouses') renderWarehouses();
+            if (tabId === 'inventory') {
+                renderInventory();
+                populateWarehouseSelect();
+            }
+            if (tabId === 'work-orders') {
+                populateWorkOrderClients();
+                renderWorkOrders();
+                // set entry time immediately (will also be updated when selecting a car)
+                setWorkOrderEntryNow();
+            }
+            if (tabId === 'add-car') initCarForm();
+            if (tabId === 'settings-body-types') renderBodyTypes();
+            if (tabId === 'price-calculator') {
+                populateCalcWarehouses();
+                renderRecentCalculations();
+            }
+            if (tabId === 'maintenance-booking') {
+                initMaintenanceBookingForm();
+                renderMaintenanceBookings();
+                populateMBBrands(); // Populate car brands on load
+            }
+            if (tabId === 'workshop') {
+                renderWorkshops();
+            }
+            if (tabId === 'attendance') {
+                renderAttendanceEmployees();
+                renderAttendance();
+            }
+        }
+
+        // Maintenance Booking - populate brands, models, engines from state.brands
+        function populateMBBrands() {
+            const brandSelect = document.getElementById('mbCarBrand');
+            if (state.brands.length > 0) {
+                brandSelect.innerHTML = '<option value="">اختر الماركة</option>' +
+                    state.brands.map(b => `<option value="${b.name}">${b.name}</option>`).join('');
+            } else {
+                brandSelect.innerHTML = '<option value="">لا توجد ماركات مسجلة (أضف من التعديل)</option>';
+            }
+        }
+
+        function populateMBCarModels() {
+            const brandName = document.getElementById('mbCarBrand').value;
+            const modelSelect = document.getElementById('mbCarModel');
+            modelSelect.innerHTML = '<option value="">اختر الموديل</option>';
+
+            const brand = state.brands.find(b => b.name === brandName);
+            if (brand && brand.models && brand.models.length > 0) {
+                modelSelect.innerHTML += brand.models.map(m => `<option value="${m}">${m}</option>`).join('');
+            } else {
+                modelSelect.innerHTML += '<option value="">لا توجد موديلات لهذه الماركة</option>';
+            }
+
+            // Clear engine select
+            populateMBCarEngines();
+        }
+
+        function populateMBCarEngines() {
+            const brandName = document.getElementById('mbCarBrand').value;
+            const modelSelect = document.getElementById('mbCarModel');
+            const engineSelect = document.getElementById('mbCarEngine');
+
+            const brand = state.brands.find(b => b.name === brandName);
+
+            if (brand && brand.engines && brand.engines.length > 0) {
+                engineSelect.innerHTML = '<option value="">اختر سعة المحرك</option>' +
+                    brand.engines.map(e => `<option value="${e}">${e} CC</option>`).join('');
+            } else {
+                engineSelect.innerHTML = '<option value="">لا توجد سعات محركات مسجلة</option>';
+            }
+        }
+
+        // Clients
+        function toggleCompanyFields(show) {
+            document.getElementById('companyFields').classList.toggle('hidden', !show);
+            const select = document.getElementById('insuranceSelectPage');
+            select.innerHTML = '<option value="">اختر شركة التأمين</option>' + state.insurances.map(ins => `<option value="${ins}">${ins}</option>`).join('');
+        }
+
+        document.getElementById('clientFormPage').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const fd = new FormData(e.target);
+
+            const clientType = fd.get('clientType');
+            const insuranceCompany = fd.get('insuranceCompany');
+            if (clientType === 'company' && !insuranceCompany) {
+                alert('يرجى اختيار شركة التأمين (إجباري للشركات).');
+                return;
+            }
+
+            const clientCode = 'C-' + Math.floor(10000 + Math.random() * 90000); // 5 digits
+            const client = {
+                code: clientCode,
+                fullName: `${fd.get('n1')} ${fd.get('n2')} ${fd.get('n3')} ${fd.get('n4')}`,
+                phone: fd.get('phone'),
+                nationalId: fd.get('nationalId'),
+                province: fd.get('province'),
+                area: fd.get('area'),
+                fullAddress: fd.get('fullAddress'),
+                type: clientType,
+                insurance: insuranceCompany,
+                repName: fd.get('repName'),
+                repPhone: fd.get('repPhone'),
+                createdAt: new Date().toISOString()
+            };
+            state.clients.push(client);
+            saveData();
+            e.target.reset();
+            showSuccessModal('تم تسجيل العميل بنجاح. يرجى الاحتفاظ بالكود التالي لاستخدامه في ربط السيارات.', clientCode);
+        });
+
+        function renderClients() {
+            const query = document.getElementById('clientSearch').value.toLowerCase();
+            const filtered = state.clients.filter(c =>
+                c.fullName.toLowerCase().includes(query) ||
+                c.phone.includes(query) ||
+                c.code.toLowerCase().includes(query)
+            ).reverse(); // Newest first
+
+            document.getElementById('clientsTableBody').innerHTML = filtered.map(c => `
+                <tr class="border-b border-gray-800 hover:bg-gray-800/50 transition">
+                    <td class="p-4 font-mono text-blue-400 font-bold">
+                        ${c.code}
+                        <button onclick="navigator.clipboard.writeText('${c.code}');" class="mr-2 text-gray-500 hover:text-white" title="نسخ الكود">
+                            <i class="far fa-copy"></i>
+                        </button>
+                    </td>
+                    <td class="p-4">${c.fullName}</td>
+                    <td class="p-4">${c.phone}</td>
+                    <td class="p-4">${c.type === 'company' ? '<span class="text-green-400">شركة</span>' : 'فرد'}</td>
+                    <td class="p-4">${c.province}</td>
+                    <td class="p-4 flex gap-2">
+                        <button onclick="deleteClient('${c.code}')" class="bg-red-900/30 text-red-500 hover:bg-red-900/50 p-2 rounded transition" title="حذف"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function deleteClient(code) {
+            if (confirm('هل أنت متأكد من حذف العميل؟ سيؤدي ذلك لفك ارتباط سياراته.')) {
+                state.clients = state.clients.filter(c => c.code !== code);
+                // Unlink cars
+                state.cars.forEach(car => {
+                    if (car.clientCode === code) car.clientCode = "Unlinked";
+                });
+                saveData();
+                renderClients();
+            }
+        }
+
+        // Cars
+        function initCarForm() {
+            const brandSelect = document.getElementById('carBrandSelectPage');
+            if (brandSelect.options.length <= 1) { // Only populate if empty
+                brandSelect.innerHTML = '<option value="">اختر الماركة</option>' +
+                    state.brands.map(b => `<option value="${b.name}">${b.name}</option>`).join('');
+            }
+            // Reset other selects
+            document.getElementById('carModelSelectPage').innerHTML = '<option value="">اختر الماركة أولاً</option>';
+            document.getElementById('carEngineSelectPage').innerHTML = '<option value="">اختر الموديل أولاً</option>';
+
+            // Populate body types from settings
+            populateCarBodyTypes();
+        }
+
+        function populateCarBodyTypes() {
+            const sel = document.getElementById('carBodyTypeSelectPage');
+            if (!sel) return;
+            if (!Array.isArray(state.bodyTypes) || state.bodyTypes.length === 0) {
+                sel.innerHTML = '<option value="">لا توجد أنواع عربيات (أضف من التعديل)</option>';
+                return;
+            }
+            // Keep a friendly English label for common types
+            const en = {
+                'سيدان': 'Sedan',
+                'هاتشباك': 'Hatchback',
+                'كروس أوفر': 'Crossover',
+                'SUV': 'SUV',
+                'بيك أب': 'Pickup',
+                'فان': 'Van',
+                'ميني فان': 'Minivan',
+                'واجون': 'Wagon',
+                'كوبيه': 'Coupe',
+                'مكشوفة': 'Convertible'
+            };
+            sel.innerHTML = '<option value="">اختر نوع الهيكل</option>' + state.bodyTypes.map(t => {
+                const label = en[t] ? `${t} (${en[t]})` : t;
+                return `<option value="${t}">${label}</option>`;
+            }).join('');
+        }
+
+        function populateModelsPage() {
+            const brandName = document.getElementById('carBrandSelectPage').value;
+            const modelSelect = document.getElementById('carModelSelectPage');
+            modelSelect.innerHTML = '<option value="">اختر الموديل</option>';
+
+            const brand = state.brands.find(b => b.name === brandName);
+            if (brand) {
+                modelSelect.innerHTML += brand.models.map(m => `<option value="${m}">${m}</option>`).join('');
+            }
+            populateEnginesPage();
+        }
+
+        function populateEnginesPage() {
+            const brandName = document.getElementById('carBrandSelectPage').value;
+            const engineSelect = document.getElementById('carEngineSelectPage');
+            engineSelect.innerHTML = '<option value="">اختر السعة</option>';
+
+            const brand = state.brands.find(b => b.name === brandName);
+            if (brand) {
+                engineSelect.innerHTML += brand.engines.map(e => `<option value="${e}">${e} CC</option>`).join('');
+            }
+        }
+
+        function searchClientForCarPage() {
+            const q = document.getElementById('clientLinkSearchPage').value.toLowerCase();
+            const resultsDiv = document.getElementById('clientSearchResultPage');
+            if (!q) { resultsDiv.innerHTML = ''; return; }
+
+            const found = state.clients.filter(c => c.fullName.toLowerCase().includes(q) || c.code.toLowerCase().includes(q) || c.nationalId.includes(q));
+            if (found.length > 0) {
+                resultsDiv.innerHTML = found.map(c => `
+                    <div class="flex justify-between items-center bg-gray-800 border border-gray-700 p-3 rounded-lg hover:bg-gray-700 transition cursor-pointer" onclick="linkClientPage('${c.code}', '${c.fullName}')">
+                        <div>
+                            <p class="font-bold text-white">${c.fullName}</p>
+                            <p class="text-xs text-blue-400 font-mono">${c.code}</p>
+                        </div>
+                        <span class="bg-blue-600 text-white px-3 py-1 rounded-full text-xs">اختيار</span>
+                    </div>
+                `).join('');
+            } else {
+                resultsDiv.innerHTML = '<p class="text-red-400 text-center p-2">لم يتم العثور على عملاء مطابقين</p>';
+            }
+        }
+
+        function linkClientPage(code, name) {
+            document.getElementById('linkedClientCodePage').value = code;
+            document.getElementById('clientSearchResultPage').innerHTML = '';
+            document.getElementById('clientLinkSearchPage').value = '';
+            document.getElementById('linkedClientNameSpan').textContent = `${name} (${code})`;
+            document.getElementById('linkedClientDisplayPage').classList.remove('hidden');
+        }
+
+        document.getElementById('carFormPage').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const fd = new FormData(e.target);
+
+            // Validation: Ensure Client is Linked
+            if (!fd.get('clientCode')) {
+                alert('خطأ: يجب ربط السيارة بعميل مسجل قبل الحفظ.\nيرجى البحث عن العميل في خانة "ربط السيارة بعميل" واختياره.');
+                return;
+            }
+
+            const carCode = Math.floor(10000 + Math.random() * 90000);
+            const car = {
+                code: carCode,
+                brand: fd.get('brand'),
+                model: fd.get('model'),
+                year: fd.get('year'),
+                engine: fd.get('engine'),
+                chassis: fd.get('chassis'),
+                engineNo: fd.get('engineNo'),
+                plate: fd.get('plate'),
+                color: fd.get('color'),
+                fuel: fd.get('fuel'),
+                type: fd.get('type'),
+                clientCode: fd.get('clientCode')
+            };
+            state.cars.push(car);
+            saveData();
+            e.target.reset();
+            document.getElementById('linkedClientDisplayPage').classList.add('hidden');
+            showSuccessModal('تم تسجيل السيارة بنجاح وربطها بالعميل.', carCode);
+        });
+
+        function renderCars() {
+            const query = document.getElementById('carSearch').value.toLowerCase();
+            const filtered = state.cars.filter(v =>
+                v.chassis.toLowerCase().includes(query) ||
+                v.plate.toLowerCase().includes(query) ||
+                v.clientCode.toLowerCase().includes(query) ||
+                v.brand.toLowerCase().includes(query) ||
+                v.model.toLowerCase().includes(query)
+            ).reverse();
+
+            document.getElementById('carsTableBody').innerHTML = filtered.map(v => `
+                <tr class="border-b border-gray-800 hover:bg-gray-800/50 transition">
+                    <td class="p-4 font-bold text-white">${v.brand} ${v.model} <span class="text-gray-500 text-xs">(${v.year})</span></td>
+                    <td class="p-4 font-mono text-orange-400">${v.chassis}</td>
+                    <td class="p-4 bg-gray-800 rounded font-mono border border-gray-700 text-center mx-2">${v.plate || '---'}</td>
+                    <td class="p-4 font-mono text-blue-400">${v.clientCode}</td>
+                    <td class="p-4">${v.engine} CC</td>
+                    <td class="p-4">
+                        <button onclick="deleteCar('${v.code}')" class="bg-red-900/30 text-red-500 hover:bg-red-900/50 p-2 rounded transition"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function deleteCar(code) {
+            if (confirm('حذف السيارة؟')) {
+                state.cars = state.cars.filter(c => c.code !== code);
+                saveData();
+                renderCars();
+            }
+        }
+
+        // Settings Management
+        function showSettingsSection(sectionId) {
+            document.querySelectorAll('.settings-section').forEach(el => el.classList.add('hidden'));
+            document.getElementById(sectionId).classList.remove('hidden');
+        }
+
+        function renderSettings() {
+            const brandsContainer = document.getElementById('brandsList');
+            if (brandsContainer) {
+                brandsContainer.innerHTML = state.brands.map((b, idx) => `
+                    <div class="bg-gray-800 border border-gray-700 p-4 rounded-xl hover:border-blue-500 transition shadow-inner">
+                        <div class="flex justify-between items-center mb-4 border-b border-gray-700 pb-2">
+                            <span class="font-bold text-blue-400 text-lg">${b.name}</span>
+                            <button onclick="deleteBrand(${idx})" class="text-red-500 hover:text-red-700 transition" title="حذف الماركة"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                        <div class="mb-4">
+                            <div class="flex justify-between items-center mb-2">
+                                <p class="text-xs text-gray-400">الموديلات:</p>
+                                <button onclick="addModelToBrand(${idx})" class="text-blue-400 text-xs hover:underline"><i class="fas fa-plus-circle ml-1"></i>إضافة موديل</button>
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                ${b.models.map((m, mIdx) => `
+                                    <span class="bg-gray-700 px-3 py-1 rounded-full text-xs text-gray-200 flex items-center gap-2 group border border-gray-600">
+                                        ${m}
+                                        <i onclick="deleteModel(${idx}, ${mIdx})" class="fas fa-times cursor-pointer hover:text-red-500 transition"></i>
+                                    </span>
+                                `).join('') || '<span class="text-gray-600 text-[10px]">لا يوجد موديلات</span>'}
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <p class="text-xs text-gray-400">سعات المحرك (CC):</p>
+                                <button onclick="addEngineToBrand(${idx})" class="text-green-400 text-xs hover:underline"><i class="fas fa-plus-circle ml-1"></i>إضافة محرك</button>
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                ${b.engines.map((e, eIdx) => `
+                                    <span class="bg-gray-900 border border-gray-700 px-3 py-1 rounded-full text-xs text-green-300 flex items-center gap-2 group">
+                                        ${e}
+                                        <i onclick="deleteEngine(${idx}, ${eIdx})" class="fas fa-times cursor-pointer hover:text-red-500 transition"></i>
+                                    </span>
+                                `).join('') || '<span class="text-gray-600 text-[10px]">لا يوجد محركات</span>'}
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            const insuranceContainer = document.getElementById('insurancesList');
+            if (insuranceContainer) {
+                insuranceContainer.innerHTML = state.insurances.map((ins, idx) => `
+                    <div class="flex justify-between items-center bg-gray-800 border border-gray-700 p-4 rounded-xl hover:border-green-500 transition group shadow-md">
+                        <span class="text-sm font-semibold group-hover:text-green-400 transition">${ins}</span>
+                        <button onclick="deleteInsurance(${idx})" class="text-gray-500 hover:text-red-500 transition" title="حذف الشركة"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+                `).join('');
+            }
+
+            const banksContainer = document.getElementById('banksList');
+            if (banksContainer) {
+                banksContainer.innerHTML = state.banks.map((bank, idx) => `
+                    <div class="flex justify-between items-center bg-gray-800 border border-gray-700 p-4 rounded-xl hover:border-teal-500 transition group shadow-md">
+                        <span class="text-sm font-semibold group-hover:text-teal-400 transition">${bank}</span>
+                        <button onclick="deleteBank(${idx})" class="text-gray-500 hover:text-red-500 transition" title="حذف البنك"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function addBrand() {
+            const name = document.getElementById('newBrandName').value;
+            if (name) {
+                state.brands.push({ name, models: [], engines: [] });
+                document.getElementById('newBrandName').value = '';
+                saveData(); renderSettings();
+            }
+        }
+        function deleteBrand(idx) {
+            if (confirm('حذف هذه الماركة بالكامل؟')) {
+                state.brands.splice(idx, 1);
+                saveData(); renderSettings();
+            }
+        }
+        function addModelToBrand(idx) {
+            const model = prompt('ادخل اسم الموديل الجديد:');
+            if (model) {
+                state.brands[idx].models.push(model);
+                saveData(); renderSettings();
+            }
+        }
+        function addEngineToBrand(idx) {
+            const engine = prompt('ادخل سعة المحرك (CC):');
+            if (engine) {
+                state.brands[idx].engines.push(engine);
+                saveData(); renderSettings();
+            }
+        }
+        function deleteModel(brandIdx, modelIdx) {
+            state.brands[brandIdx].models.splice(modelIdx, 1);
+            saveData(); renderSettings();
+        }
+        function deleteEngine(brandIdx, engineIdx) {
+            state.brands[brandIdx].engines.splice(engineIdx, 1);
+            saveData(); renderSettings();
+        }
+        function addInsurance() {
+            const name = document.getElementById('newInsuranceName').value;
+            if (name) {
+                state.insurances.push(name);
+                document.getElementById('newInsuranceName').value = '';
+                saveData(); renderSettings();
+            }
+        }
+        function deleteInsurance(idx) {
+            if (confirm('حذف شركة التأمين؟')) {
+                state.insurances.splice(idx, 1);
+                saveData(); renderSettings();
+            }
+        }
+        function addBank() {
+            const name = document.getElementById('newBankName').value;
+            if (name) {
+                state.banks.push(name);
+                document.getElementById('newBankName').value = '';
+                saveData(); renderSettings();
+            }
+        }
+        function deleteBank(idx) {
+            if (confirm('حذف هذا البنك؟')) {
+                state.banks.splice(idx, 1);
+                saveData(); renderSettings();
+            }
+        }
+
+        // Body Types (Car Types)
+        function normalizeBodyTypeName(s) {
+            return String(s || '').trim().replace(/\s+/g, ' ');
+        }
+
+        function renderBodyTypes() {
+            const list = document.getElementById('bodyTypesList');
+            if (!list) return;
+
+            // Seed defaults if empty
+            if (!Array.isArray(state.bodyTypes) || state.bodyTypes.length === 0) {
+                state.bodyTypes = ['سيدان', 'كروس أوفر', 'SUV', 'هاتشباك', 'كوبيه', 'بيك أب', 'فان', 'ميني فان', 'واجون', 'مكشوفة'];
+                saveData();
+            }
+
+            const en = {
+                'سيدان': 'Sedan',
+                'هاتشباك': 'Hatchback',
+                'كروس أوفر': 'Crossover',
+                'SUV': 'SUV',
+                'بيك أب': 'Pickup',
+                'فان': 'Van',
+                'ميني فان': 'Minivan',
+                'واجون': 'Wagon',
+                'كوبيه': 'Coupe',
+                'مكشوفة': 'Convertible'
+            };
+
+            list.innerHTML = state.bodyTypes.map((t, idx) => {
+                const label = en[t] ? `${t} (${en[t]})` : t;
+                return `
+                    <div class="bg-gray-800 border border-gray-700 rounded-xl p-4 hover:border-purple-500 transition">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <div class="font-bold text-white">${label}</div>
+                                <div class="text-[11px] text-gray-400 mt-1">يُستخدم في صفحة إنشاء سيارة</div>
+                            </div>
+                            <button onclick="deleteBodyType(${idx})" class="text-gray-400 hover:text-red-500 transition" title="حذف">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('') || '<div class="text-gray-400">لا توجد أنواع</div>';
+        }
+
+        function addBodyType() {
+            const input = document.getElementById('newBodyTypeName');
+            if (!input) return;
+            const name = normalizeBodyTypeName(input.value);
+            if (!name) return;
+
+            const exists = (state.bodyTypes || []).some(t => normalizeBodyTypeName(t).toLowerCase() === name.toLowerCase());
+            if (exists) {
+                alert('هذا النوع موجود بالفعل.');
+                return;
+            }
+
+            state.bodyTypes = state.bodyTypes || [];
+            state.bodyTypes.push(name);
+            input.value = '';
+            saveData();
+            renderBodyTypes();
+            // Refresh car form select if opened
+            populateCarBodyTypes();
+        }
+
+        function deleteBodyType(idx) {
+            if (!confirm('حذف نوع العربية؟')) return;
+            state.bodyTypes.splice(idx, 1);
+            saveData();
+            renderBodyTypes();
+            populateCarBodyTypes();
+        }
+
+        // Warehouses
+        document.getElementById('warehouseForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const fd = new FormData(e.target);
+            const name = String(fd.get('name') || '').trim();
+            const location = String(fd.get('location') || '').trim();
+
+            if (!name || !location) {
+                alert('الرجاء إدخال اسم المخزن والموقع');
+                return;
+            }
+
+            const exists = state.warehouses.some(w =>
+                (String(w.name || '').trim().toLowerCase() === name.toLowerCase()) &&
+                (String(w.location || '').trim().toLowerCase() === location.toLowerCase())
+            );
+            if (exists) {
+                alert('هذا المخزن موجود بالفعل بنفس الاسم والموقع.');
+                return;
+            }
+
+            state.warehouses.push({
+                id: Date.now(),
+                name,
+                location
+            });
+            saveData();
+
+            // Refresh selects/views
+            populateWarehouseSelect();
+            populateWarehousesOpenSelect();
+            renderWarehouses();
+
+            e.target.reset();
+            document.getElementById('warehouseFormModal').classList.add('hidden');
+        });
+
+        function renderWarehouses() {
+            // Warehouses tab is now a "open warehouse" view
+            populateWarehousesOpenSelect();
+            // Auto-open last selected warehouse (if any)
+            const lastOpened = localStorage.getItem('dealership_open_warehouse_id');
+            const select = document.getElementById('warehouseOpenSelect');
+            if (select && lastOpened) {
+                select.value = lastOpened;
+                openWarehouseView();
+            } else {
+                // reset view
+                const meta = document.getElementById('warehouseOpenMeta');
+                const ns = document.getElementById('warehouseNotSelected');
+                const tw = document.getElementById('warehouseInventoryTableWrap');
+                if (meta) meta.classList.add('hidden');
+                if (ns) ns.classList.remove('hidden');
+                if (tw) tw.classList.add('hidden');
+                document.getElementById('warehouseInventoryTableBody').innerHTML = '';
+            }
+        }
+
+        function populateWarehousesOpenSelect() {
+            const select = document.getElementById('warehouseOpenSelect');
+            if (!select) return;
+            if (state.warehouses.length === 0) {
+                select.innerHTML = '<option value="">لا توجد مخازن مضافة (أضفها من صفحة المنتجات)</option>';
+                return;
+            }
+            select.innerHTML = '<option value="">اختر مخزن...</option>' + state.warehouses.map(w =>
+                `<option value="${w.id}">${w.name} — ${w.location}</option>`
+            ).join('');
+        }
+
+        function openWarehouseView() {
+            const select = document.getElementById('warehouseOpenSelect');
+            if (!select) return;
+            const wid = select.value;
+            const metaWrap = document.getElementById('warehouseOpenMeta');
+            const ns = document.getElementById('warehouseNotSelected');
+            const tw = document.getElementById('warehouseInventoryTableWrap');
+
+            if (!wid) {
+                localStorage.removeItem('dealership_open_warehouse_id');
+                if (metaWrap) metaWrap.classList.add('hidden');
+                if (ns) ns.classList.remove('hidden');
+                if (tw) tw.classList.add('hidden');
+                document.getElementById('warehouseInventoryTableBody').innerHTML = '';
+                return;
+            }
+
+            localStorage.setItem('dealership_open_warehouse_id', wid);
+            if (ns) ns.classList.add('hidden');
+            if (tw) tw.classList.remove('hidden');
+            if (metaWrap) metaWrap.classList.remove('hidden');
+
+            const w = state.warehouses.find(x => String(x.id) === String(wid));
+            document.getElementById('warehouseMetaName').textContent = w ? w.name : '';
+            document.getElementById('warehouseMetaLocation').textContent = w ? w.location : '';
+
+            renderWarehouseInventory();
+        }
+
+        function renderWarehouseInventory() {
+            const select = document.getElementById('warehouseOpenSelect');
+            const wid = select ? select.value : '';
+            const q = (document.getElementById('warehouseInventorySearch')?.value || '').toLowerCase();
+            const body = document.getElementById('warehouseInventoryTableBody');
+            if (!body) return;
+            if (!wid) { body.innerHTML = ''; return; }
+
+            const items = state.inventory
+                .filter(p => String(p.warehouseId) === String(wid))
+                .filter(p => (p.name || '').toLowerCase().includes(q) || (p.code || '').toLowerCase().includes(q));
+
+            document.getElementById('warehouseMetaCount').textContent = String(items.length);
+
+            body.innerHTML = items.map(p => `
+                <tr class="border-b border-gray-800 hover:bg-gray-800/50 transition">
+                    <td class="p-3 font-mono text-orange-400">${p.code}</td>
+                    <td class="p-3 font-bold text-white">${p.name}</td>
+                    <td class="p-3 text-green-400 font-bold">${p.quantity}</td>
+                    <td class="p-3">${p.price} ج.م</td>
+                </tr>
+            `).join('') || `
+                <tr>
+                    <td colspan="4" class="p-6 text-center text-gray-400">لا توجد منتجات في هذا المخزن حالياً</td>
+                </tr>
+            `;
+        }
+
+        // Inventory
+        function populateWarehouseSelect() {
+            const select = document.getElementById('inventoryWarehouseSelect');
+            if (state.warehouses.length === 0) {
+                select.innerHTML = '<option value="">لا توجد مخازن مضافة</option>';
+            } else {
+                select.innerHTML = '<option value="">اختر المخزن</option>' +
+                    state.warehouses.map(w => `<option value="${w.id}">${w.name}</option>`).join('');
+            }
+        }
+
+        document.getElementById('productForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const fd = new FormData(e.target);
+            const warehouseId = fd.get('warehouseId');
+            const warehouse = state.warehouses.find(w => w.id == warehouseId);
+
+            if (!warehouse) { alert('الرجاء اختيار مخزن صحيح'); return; }
+
+            const product = {
+                code: 'P-' + Math.floor(1000 + Math.random() * 9000),
+                name: fd.get('productName'),
+                warehouseId: warehouseId,
+                warehouseName: warehouse.name,
+                quantity: fd.get('quantity'),
+                price: fd.get('price') || 0
+            };
+            state.inventory.push(product);
+            saveData();
+            renderInventory();
+            e.target.reset();
+        });
+
+        function renderInventory() {
+            const query = document.getElementById('inventorySearch').value.toLowerCase();
+            const filtered = state.inventory.filter(p => p.name.toLowerCase().includes(query) || p.warehouseName.toLowerCase().includes(query));
+
+            document.getElementById('inventoryTableBody').innerHTML = filtered.map(p => `
+                 <tr class="border-b border-gray-800 hover:bg-gray-800/50 transition">
+                    <td class="p-3 font-mono text-orange-400">${p.code}</td>
+                    <td class="p-3 font-bold">${p.name}</td>
+                    <td class="p-3 text-sm text-gray-400">${p.warehouseName}</td>
+                    <td class="p-3 text-green-400 font-bold">${p.quantity}</td>
+                    <td class="p-3">${p.price} ج.م</td>
+                </tr>
+            `).join('');
+        }
+
+        // Price Calculator Page
+        let priceCalculations = JSON.parse(localStorage.getItem('dealership_price_calculations')) || [];
+
+        function populateCalcWarehouses() {
+            const select = document.getElementById('calcWarehouseSelect');
+            if (state.warehouses.length === 0) {
+                select.innerHTML = '<option value="">لا توجد مخازن مضافة</option>';
+            } else {
+                select.innerHTML = '<option value="">اختر المخزن</option>' +
+                    state.warehouses.map(w => `<option value="${w.id}">${w.name}</option>`).join('');
+            }
+        }
+
+        function populateCalcProducts() {
+            const warehouseId = document.getElementById('calcWarehouseSelect').value;
+            const productSelect = document.getElementById('calcProductSelect');
+
+            if (!warehouseId) {
+                productSelect.innerHTML = '<option value="">اختر المخزن أولاً</option>';
+                return;
+            }
+
+            const products = state.inventory.filter(p => String(p.warehouseId) === String(warehouseId));
+            if (products.length === 0) {
+                productSelect.innerHTML = '<option value="">لا توجد منتجات في هذا المخزن</option>';
+            } else {
+                productSelect.innerHTML = '<option value="">اختر المنتج</option>' +
+                    products.map(p => `<option value="${p.code}" data-price="${p.price}" data-quantity="${p.quantity}">${p.name} (متوفر: ${p.quantity})</option>`).join('');
+            }
+        }
+
+        function loadProductPrice() {
+            const productSelect = document.getElementById('calcProductSelect');
+            const selectedOption = productSelect.options[productSelect.selectedIndex];
+            const unitCostInput = document.querySelector('input[name="unitCost"]');
+
+            if (selectedOption && selectedOption.value) {
+                const price = selectedOption.getAttribute('data-price');
+                unitCostInput.value = price || 0;
+            } else {
+                unitCostInput.value = '';
+            }
+        }
+
+        function calculatePricePage() {
+            const form = document.getElementById('priceCalculatorPageForm');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            const fd = new FormData(form);
+            const costPrice = parseFloat(fd.get('costPrice')) || 0;
+            const taxRate = parseFloat(fd.get('taxRate')) || 14;
+            const manufacturingRate = parseFloat(fd.get('manufacturingRate')) || 0;
+            const profitRate = parseFloat(fd.get('profitRate')) || 0;
+            const quantityUsed = parseInt(fd.get('quantityUsed')) || 0;
+            const productSelect = fd.get('productSelect');
+
+            if (costPrice <= 0) {
+                alert('يرجى إدخال سعر شراء صحيح');
+                return;
+            }
+
+            if (productSelect && quantityUsed <= 0) {
+                alert('يرجى إدخال الكمية المستخدمة من المخزن');
+                return;
+            }
+
+            const taxAmount = costPrice * (taxRate / 100);
+            const manufacturingAmount = costPrice * (manufacturingRate / 100);
+            const profitAmount = costPrice * (profitRate / 100);
+            const finalPrice = costPrice + taxAmount + manufacturingAmount + profitAmount;
+
+            // Display results
+            document.getElementById('resultCostPrice').textContent = costPrice.toFixed(2);
+            document.getElementById('resultTax').textContent = taxAmount.toFixed(2);
+            document.getElementById('resultManufacturing').textContent = manufacturingAmount.toFixed(2);
+            document.getElementById('resultProfit').textContent = profitAmount.toFixed(2);
+            document.getElementById('resultFinalPrice').textContent = finalPrice.toFixed(2);
+            document.getElementById('calculationResultPage').classList.remove('hidden');
+
+            // Store for save
+            window.lastCalculation = {
+                clientName: fd.get('clientName'),
+                clientPhone: fd.get('clientPhone'),
+                clientCode: fd.get('clientCode'),
+                productCode: productSelect,
+                quantityUsed,
+                costPrice,
+                taxRate,
+                manufacturingRate,
+                profitRate,
+                taxAmount,
+                manufacturingAmount,
+                profitAmount,
+                finalPrice
+            };
+        }
+
+        function savePriceCalculation() {
+            if (!window.lastCalculation) {
+                alert('يرجى حساب السعر أولاً');
+                return;
+            }
+
+            const userForm = document.getElementById('calculatorUserForm');
+            if (!userForm.checkValidity()) {
+                userForm.reportValidity();
+                return;
+            }
+            const fd = new FormData(userForm);
+            const userName = fd.get('userName');
+            const userPosition = fd.get('userPosition');
+            const userPhone = fd.get('userPhone');
+
+            if (!userName || !userPosition || !userPhone) {
+                alert('يرجى إدخال جميع البيانات المطلوبة');
+                return;
+            }
+
+            // خفض المخزون إذا تم اختيار منتج من المخزن
+            if (window.lastCalculation.productCode && window.lastCalculation.quantityUsed > 0) {
+                const product = state.inventory.find(p => p.code === window.lastCalculation.productCode);
+                if (product) {
+                    const newQuantity = parseInt(product.quantity) - window.lastCalculation.quantityUsed;
+                    if (newQuantity < 0) {
+                        alert('الكمية المستخدمة أكثر من الكمية المتوفرة في المخزن!');
+                        return;
+                    }
+                    product.quantity = newQuantity;
+                }
+            }
+
+            const calculation = {
+                id: Date.now(),
+                ...window.lastCalculation,
+                userName,
+                userPosition,
+                userPhone,
+                createdAt: new Date().toISOString()
+            };
+
+            priceCalculations.push(calculation);
+            localStorage.setItem('dealership_price_calculations', JSON.stringify(priceCalculations));
+            saveData();
+
+            showSuccessModal('تم حفظ الحساب بنجاح! تم خفض المخزون تلقائياً.', userName);
+
+            // Reset forms
+            userForm.reset();
+            document.getElementById('priceCalculatorPageForm').reset();
+            document.getElementById('calculationResultPage').classList.add('hidden');
+            document.getElementById('calculatorDateTime').textContent = '';
+
+            renderRecentCalculations();
+        }
+
+        function renderRecentCalculations() {
+            const list = document.getElementById('recentCalculationsList');
+            const recent = priceCalculations.slice().reverse().slice(0, 5);
+
+            if (recent.length === 0) {
+                list.innerHTML = '<p class="text-xs text-gray-500">لا توجد حسابات محفوظة</p>';
+                return;
+            }
+
+            list.innerHTML = recent.map(calc => `
+                <div class="bg-gray-800 border border-gray-700 p-2 rounded text-xs hover:border-blue-500 transition cursor-pointer">
+                    <p class="font-bold text-white">${calc.userName}</p>
+                    <p class="text-gray-400">${calc.userPosition}</p>
+                    ${calc.clientName ? `<p class="text-blue-400 text-xs mt-1">العميل: ${calc.clientName}</p>` : ''}
+                    <p class="text-green-400 font-mono mt-1">السعر: ${calc.finalPrice.toFixed(2)} ج.م</p>
+                    <p class="text-gray-500 text-xs mt-1">${new Date(calc.createdAt).toLocaleDateString('ar-EG')}</p>
+                </div>
+            `).join('');
+        }
+
+        // Update date/time when opening calculator tab
+        document.addEventListener('DOMContentLoaded', () => {
+            const updateDateTime = () => {
+                const now = new Date();
+                const options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' };
+                document.getElementById('calculatorDateTime').textContent = now.toLocaleDateString('ar-EG', options);
+            };
+            updateDateTime();
+            setInterval(updateDateTime, 60000); // Update every minute
+        });
+
+        // Maintenance Booking
+        function initMaintenanceBookingForm() {
+            const form = document.getElementById('maintenanceBookingForm');
+            if (!form) return;
+            const dateEl = form.querySelector('input[name="entryDate"]');
+            const timeEl = form.querySelector('input[name="entryTime"]');
+            const now = new Date();
+            const pad = (n) => String(n).padStart(2, '0');
+            if (dateEl && !dateEl.value) {
+                dateEl.value = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+            }
+            if (timeEl && !timeEl.value) {
+                timeEl.value = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
+            }
+        }
+
+        document.getElementById('maintenanceBookingForm')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const fd = new FormData(e.target);
+
+            const booking = {
+                number: state.maintenanceBookings.length + 1,
+                clientName: String(fd.get('clientName') || '').trim(),
+                clientPhone: String(fd.get('clientPhone') || '').trim(),
+                carBrand: String(fd.get('carBrand') || '').trim(),
+                carModel: String(fd.get('carModel') || '').trim(),
+                carYear: Number(fd.get('carYear')),
+                carEngine: Number(fd.get('carEngine')),
+                entryDate: fd.get('entryDate'),
+                entryTime: fd.get('entryTime'),
+                entryAt: `${fd.get('entryDate')}T${fd.get('entryTime')}`,
+                maintenanceType: fd.get('maintenanceType'),
+                complaint: String(fd.get('complaint') || '').trim(),
+                createdAt: new Date().toISOString()
+            };
+
+            // basic validation
+            if (!booking.clientName || !booking.clientPhone || !booking.carBrand || !booking.carModel || !booking.entryDate || !booking.entryTime || !booking.maintenanceType || !booking.complaint) {
+                alert('يرجى إدخال جميع البيانات المطلوبة');
+                return;
+            }
+            if (!isFinite(booking.carYear) || booking.carYear < 1950 || booking.carYear > 2026) {
+                alert('يرجى إدخال سنة صنع صحيحة');
+                return;
+            }
+            if (!isFinite(booking.carEngine) || booking.carEngine <= 0) {
+                alert('يرجى إدخال سعة محرك صحيحة');
+                return;
+            }
+
+            state.maintenanceBookings.push(booking);
+            saveData();
+            e.target.reset();
+            initMaintenanceBookingForm();
+            renderMaintenanceBookings();
+            showSuccessModal('تم تسجيل حجز الصيانة بنجاح.', booking.number);
+        });
+
+        function renderMaintenanceBookings() {
+            const q = (document.getElementById('maintenanceSearch')?.value || '').toLowerCase();
+            const body = document.getElementById('maintenanceBookingsTableBody');
+            if (!body) return;
+
+            const fmt = (isoOrLocal) => {
+                if (!isoOrLocal) return '—';
+                const d = new Date(isoOrLocal);
+                if (isNaN(d.getTime())) return isoOrLocal;
+                return d.toLocaleString('ar-EG', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+            };
+
+            const filtered = state.maintenanceBookings
+                .filter(b => {
+                    const hay = `${b.number} ${b.clientName} ${b.clientPhone} ${b.carBrand} ${b.carModel} ${b.carYear} ${b.carEngine} ${b.maintenanceType} ${b.complaint}`.toLowerCase();
+                    return hay.includes(q);
+                })
+                .slice()
+                .reverse();
+
+            body.innerHTML = filtered.map(b => `
+                <tr class="border-b border-gray-800 hover:bg-gray-800/50 transition">
+                    <td class="p-3 font-mono text-blue-300 font-bold">${b.number}</td>
+                    <td class="p-3">
+                        <div class="font-semibold text-white">${b.clientName}</div>
+                        <div class="text-xs text-gray-400 font-mono">${b.clientPhone}</div>
+                    </td>
+                    <td class="p-3">
+                        <div class="font-semibold text-white">${b.carBrand} ${b.carModel}</div>
+                        <div class="text-xs text-gray-400">${b.carYear} — ${b.carEngine} CC</div>
+                    </td>
+                    <td class="p-3 text-xs text-gray-200 font-mono">${fmt(b.entryAt)}</td>
+                    <td class="p-3">
+                        <span class="px-2 py-1 rounded-full text-xs bg-blue-900/40 border border-blue-700 text-blue-200">${b.maintenanceType}</span>
+                    </td>
+                    <td class="p-3 text-gray-200">${b.complaint}</td>
+                </tr>
+            `).join('') || `
+                <tr>
+                    <td colspan="6" class="p-6 text-center text-gray-400">لا توجد حجوزات مسجلة حالياً</td>
+                </tr>
+            `;
+        }
+
+        // Work Orders
+        function populateWorkOrderClients() {
+            const select = document.getElementById('workOrderClientSelect');
+            if (!select) return;
+            if (state.clients.length === 0) {
+                select.innerHTML = '<option value="">لا يوجد عملاء مسجلين</option>';
+            } else {
+                select.innerHTML = '<option value="">اختر العميل</option>' +
+                    state.clients.map(c => `<option value="${c.code}">${c.fullName} (${c.code})</option>`).join('');
+            }
+            const carSel = document.getElementById('workOrderCarSelect');
+            if (carSel) carSel.innerHTML = '<option value="">اختر العميل أولاً</option>';
+
+            // reset km/time fields
+            resetWorkOrderKmAndTimes();
+        }
+
+        function populateWorkOrderCars() {
+            const clientCode = document.getElementById('workOrderClientSelect').value;
+            const carSelect = document.getElementById('workOrderCarSelect');
+            if (!clientCode) {
+                carSelect.innerHTML = '<option value="">اختر العميل أولاً</option>';
+                resetWorkOrderKmAndTimes();
+                return;
+            }
+            const cars = state.cars.filter(c => c.clientCode === clientCode);
+            if (cars.length === 0) {
+                carSelect.innerHTML = '<option value="">لا توجد سيارات لهذا العميل</option>';
+                resetWorkOrderKmAndTimes();
+            } else {
+                carSelect.innerHTML = '<option value="">اختر السيارة</option>' + cars.map(c =>
+                    `<option value="${c.code}">${c.brand} ${c.model} (${c.year}) — لوحة: ${c.plate}</option>`
+                ).join('');
+                resetWorkOrderKmAndTimes();
+            }
+        }
+
+        function resetWorkOrderKmAndTimes() {
+            const prevKm = document.getElementById('workOrderPrevKm');
+            const currKm = document.getElementById('workOrderCurrentKm');
+            const entryAt = document.getElementById('workOrderEntryAt');
+            if (prevKm) prevKm.value = '';
+            if (currKm) currKm.value = '';
+            if (entryAt) entryAt.value = '';
+        }
+
+        function setWorkOrderEntryNow() {
+            const input = document.getElementById('workOrderEntryAt');
+            if (!input) return;
+            const now = new Date();
+            const pad = (n) => String(n).padStart(2, '0');
+            const value = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+            input.value = value;
+
+            // default expected exit: tomorrow at same hour (editable)
+            const dateEl = document.getElementById('workOrderExpectedExitDate');
+            const timeEl = document.getElementById('workOrderExpectedExitTime');
+            if (dateEl && !dateEl.value) {
+                const tmr = new Date(now);
+                tmr.setDate(tmr.getDate() + 1);
+                dateEl.value = `${tmr.getFullYear()}-${pad(tmr.getMonth() + 1)}-${pad(tmr.getDate())}`;
+            }
+            if (timeEl && !timeEl.value) {
+                timeEl.value = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
+            }
+        }
+
+        function populateWorkOrderPrevKm() {
+            const carCode = document.getElementById('workOrderCarSelect')?.value;
+            const prevKmInput = document.getElementById('workOrderPrevKm');
+            const currKmInput = document.getElementById('workOrderCurrentKm');
+            if (!carCode || !prevKmInput) return;
+
+            // Find last work order for this car (by createdAt desc)
+            const last = state.workOrders
+                .filter(w => String(w.carCode) === String(carCode) && (w.currentKm !== undefined && w.currentKm !== null && w.currentKm !== ''))
+                .slice()
+                .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
+
+            const prevVal = last ? Number(last.currentKm) : 0;
+            prevKmInput.value = isFinite(prevVal) ? String(prevVal) : '0';
+
+            // set entry time now whenever a car is selected
+            setWorkOrderEntryNow();
+
+            // hint: set min for current km
+            if (currKmInput) {
+                currKmInput.min = String(prevVal);
+            }
+        }
+
+        function toggleCashSubtype() {
+            const sel = document.getElementById('workOrderTypeSelect');
+            const wrap = document.getElementById('cashSubtypeWrap');
+            if (!sel || !wrap) return;
+            const isCash = sel.value === 'كاش';
+            wrap.classList.toggle('hidden', !isCash);
+            // clear previous selection when not cash
+            if (!isCash) {
+                document.querySelectorAll('input[name="cashSubtype"]').forEach(r => r.checked = false);
+            }
+        }
+
+        document.getElementById('workOrderForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const fd = new FormData(e.target);
+            const workOrderCode = state.workOrders.length + 1;
+            const clientCode = fd.get('clientCode');
+            const carCode = fd.get('carCode');
+            const client = state.clients.find(c => c.code === clientCode);
+            const car = state.cars.find(c => String(c.code) === String(carCode));
+
+            if (!client || !car) {
+                alert('يرجى اختيار عميل وسيارة صالحين');
+                return;
+            }
+
+            const orderType = fd.get('orderType');
+            const cashSubtype = fd.get('cashSubtype') || '';
+            if (orderType === 'كاش' && !cashSubtype) {
+                alert('يرجى اختيار تصنيف الكاش (أفراد / شركات)');
+                return;
+            }
+
+            const previousKm = Number(fd.get('previousKm'));
+            const currentKm = Number(fd.get('currentKm'));
+            if (!isFinite(previousKm) || !isFinite(currentKm)) {
+                alert('يرجى إدخال بيانات العداد بشكل صحيح');
+                return;
+            }
+            if (currentKm < previousKm) {
+                alert('خطأ: عداد الكيلومتر الحالي لا يمكن أن يكون أقل من العداد السابق.');
+                return;
+            }
+
+            const entryAt = fd.get('entryAt');
+            const expectedExitDate = fd.get('expectedExitDate');
+            const expectedExitTime = fd.get('expectedExitTime');
+            const expectedExitAt = `${expectedExitDate}T${expectedExitTime}`;
+
+            const workOrder = {
+                code: workOrderCode,
+                clientCode,
+                clientName: client.fullName,
+                carCode,
+                carName: `${car.brand} ${car.model} (${car.year}) — لوحة: ${car.plate}`,
+                orderType,
+                cashSubtype,
+                previousKm,
+                currentKm,
+                entryAt,
+                expectedExitDate,
+                expectedExitTime,
+                expectedExitAt,
+                serviceType: fd.get('serviceType'),
+                complaint: fd.get('complaint'),
+                technician: fd.get('technician'),
+                createdAt: new Date().toISOString()
+            };
+            state.workOrders.push(workOrder);
+            saveData();
+            e.target.reset();
+            toggleCashSubtype();
+            showSuccessModal('تم فتح أمر الشغل بنجاح وربطه بالعميل والسيارة.', workOrderCode);
+            populateWorkOrderClients();
+            renderWorkOrders();
+        });
+
+        function deleteWorkOrder(number) {
+            if (!number && number !== 0) return;
+            if (!confirm('هل أنت متأكد من حذف أمر الشغل رقم ' + number + '؟')) return;
+            state.workOrders = state.workOrders.filter(w => Number(w.code) !== Number(number));
+            saveData();
+            renderWorkOrders();
+        }
+
+        function renderWorkOrders() {
+            const query = document.getElementById('workOrderSearch').value.toLowerCase();
+            const filtered = state.workOrders.filter(o => {
+                const hay = `${o.clientCode || ''} ${o.clientName || ''} ${o.carName || ''} ${o.orderType || ''} ${o.cashSubtype || ''} ${o.serviceType || ''} ${o.code || ''}`.toLowerCase();
+                return hay.includes(query);
+            }).reverse();
+
+            const fmt = (isoOrLocal) => {
+                if (!isoOrLocal) return '—';
+                // handle both ISO and yyyy-mm-ddThh:mm:ss
+                const d = new Date(isoOrLocal);
+                if (isNaN(d.getTime())) return isoOrLocal;
+                return d.toLocaleString('ar-EG', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            };
+
+            document.getElementById('workOrdersTableBody').innerHTML = filtered.map(o => {
+                const typeLabel = o.orderType ? (o.orderType === 'كاش' && o.cashSubtype ? `كاش - ${o.cashSubtype}` : o.orderType) : '—';
+                const entry = o.entryAt || o.createdAt;
+                const expected = o.expectedExitAt || (o.expectedExitDate && o.expectedExitTime ? `${o.expectedExitDate}T${o.expectedExitTime}` : '');
+
+                return `
+                <tr class="border-b border-gray-800 hover:bg-gray-800/50 transition">
+                    <td class="p-3 font-mono text-yellow-400 font-bold">${o.code}</td>
+                    <td class="p-3">
+                        <div class="font-semibold text-white">${o.clientName}</div>
+                        <div class="text-xs text-blue-400 font-mono">${o.clientCode}</div>
+                    </td>
+                    <td class="p-3">
+                        <div class="font-semibold text-white">${o.carName}</div>
+                    </td>
+                    <td class="p-3 font-mono text-green-300 font-bold">${(o.currentKm ?? '—')}</td>
+                    <td class="p-3 text-xs text-gray-200 font-mono">${fmt(entry)}</td>
+                    <td class="p-3 text-xs text-gray-200 font-mono">${fmt(expected)}</td>
+                    <td class="p-3 text-sm">
+                        <span class="px-2 py-1 rounded-full text-xs bg-gray-800 border border-gray-700 text-gray-200">${typeLabel}</span>
+                    </td>
+                    <td class="p-3 text-sm text-gray-200">${o.serviceType}</td>
+                    <td class="p-3">
+                        <button onclick="deleteWorkOrder(${o.code})" class="bg-red-900/30 text-red-500 hover:bg-red-900/50 px-3 py-2 rounded-lg transition" title="حذف أمر الشغل">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+            }).join('') || `
+                <tr>
+                    <td colspan="9" class="p-6 text-center text-gray-400">لا توجد أوامر شغل مسجلة حالياً</td>
+                </tr>
+            `;
+        }
+
+        // Employees
+        function toggleRecruitmentField() {
+            const gender = document.getElementById('empGender').value;
+            const milField = document.getElementById('militaryField');
+            if (gender === 'female') {
+                milField.style.opacity = '0.3';
+                milField.style.pointerEvents = 'none';
+                milField.querySelector('input').checked = false;
+            } else {
+                milField.style.opacity = '1';
+                milField.style.pointerEvents = 'auto';
+            }
+        }
+
+        document.getElementById('employeeForm')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const fd = new FormData(e.target);
+
+            const fullName = String(fd.get('fullName') || '').trim();
+            const phone = String(fd.get('phone') || '').trim();
+            const nationalId = String(fd.get('nationalId') || '').trim();
+            const jobTitle = String(fd.get('jobTitle') || '').trim();
+            const address = String(fd.get('address') || '').trim();
+            const monthlySalary = Number(fd.get('monthlySalary'));
+
+            // Get all checked documents
+            const docs = [];
+            if (fd.get('doc_id')) docs.push('صورة البطاقة');
+            if (fd.get('doc_birth')) docs.push('أصل شهادة الميلاد');
+            if (fd.get('doc_edu')) docs.push('أصل المؤهل الدراسي');
+            if (fd.get('doc_military')) docs.push('أصل الموقف من التجنيد');
+            if (fd.get('doc_form6')) docs.push('نموذج 6');
+            if (fd.get('doc_ins')) docs.push('طابعة تأمينية');
+            if (fd.get('doc_conduct')) docs.push('حسن سير وسلوك');
+            if (fd.get('doc_eng')) docs.push('كارنيه نقابة');
+            if (fd.get('doc_tech')) docs.push('كارنيه مزاولة مهنة');
+
+            if (!fullName || !phone || !nationalId || !jobTitle || !address) {
+                alert('يرجى إدخال جميع البيانات المطلوبة');
+                return;
+            }
+            if (String(nationalId).length !== 14) {
+                alert('الرقم القومي يجب أن يكون 14 رقم');
+                return;
+            }
+            if (!isFinite(monthlySalary) || monthlySalary < 0) {
+                alert('يرجى إدخال مرتب شهري صحيح');
+                return;
+            }
+
+            const nextNumber = state.employees.length + 1;
+            const empCode = 'EMP-' + String(nextNumber).padStart(4, '0');
+
+            state.employees.push({
+                id: Date.now(),
+                code: empCode,
+                fullName,
+                phone,
+                nationalId,
+                jobTitle,
+                address,
+                monthlySalary,
+                docs,
+                gender: fd.get('gender'),
+                createdAt: new Date().toISOString()
+            });
+            saveData();
+            e.target.reset();
+            toggleRecruitmentField(); // reset military field state
+
+            renderAttendanceEmployees();
+            showSuccessModal('تم حفظ الموظف بنجاح.', empCode);
+        });
+
+        function getLocalDayKey(d = new Date()) {
+            const dt = new Date(d);
+            const y = dt.getFullYear();
+            const m = String(dt.getMonth() + 1).padStart(2, '0');
+            const day = String(dt.getDate()).padStart(2, '0');
+            return `${y}-${m}-${day}`;
+        }
+
+        function hasAttendanceToday(employeeCode, dayKey = getLocalDayKey()) {
+            return state.attendance.some(r => r.employeeCode === employeeCode && r.dayKey === dayKey);
+        }
+
+        function renderAttendanceEmployees() {
+            const sel = document.getElementById('attendanceEmployeeSelect');
+            if (!sel) return;
+
+            if (state.employees.length === 0) {
+                sel.innerHTML = '<option value="">لا يوجد موظفين مسجلين</option>';
+                return;
+            }
+
+            const todayKey = getLocalDayKey();
+            const available = state.employees.filter(emp => !hasAttendanceToday(emp.code, todayKey));
+
+            if (available.length === 0) {
+                sel.innerHTML = '<option value="">تم تسجيل كل الموظفين اليوم</option>';
+                return;
+            }
+
+            sel.innerHTML = '<option value="">اختر الموظف</option>' + available.map(emp =>
+                `<option value="${emp.code}">${emp.fullName} (${emp.code}) — ${emp.jobTitle || ''}</option>`
+            ).join('');
+        }
+
+        document.getElementById('attendanceForm')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const fd = new FormData(e.target);
+            const employeeCode = String(fd.get('employeeCode') || '').trim();
+            const type = String(fd.get('type') || '').trim();
+            const notes = String(fd.get('notes') || '').trim();
+
+            const emp = state.employees.find(x => x.code === employeeCode);
+            if (!emp) {
+                alert('يرجى اختيار موظف صحيح');
+                return;
+            }
+
+            if (!employeeCode || !type) {
+                alert('يرجى إدخال جميع البيانات المطلوبة');
+                return;
+            }
+
+            const todayKey = getLocalDayKey();
+            if (hasAttendanceToday(employeeCode, todayKey)) {
+                alert('تم تسجيل هذا الموظف بالفعل اليوم. لا يمكن تسجيله حضور وغياب في نفس اليوم.');
+                return;
+            }
+
+            const monthlySalary = Number(emp.monthlySalary);
+            // خصم يوم واحد: نفترض الشهر 30 يوم
+            const dayDeduction = (type === 'غياب' && isFinite(monthlySalary) && monthlySalary > 0)
+                ? (monthlySalary / 30)
+                : 0;
+
+            const record = {
+                id: state.attendance.length + 1,
+                employeeCode,
+                employeeName: emp.fullName,
+                type,
+                notes,
+                deduction: Number(dayDeduction.toFixed(2)),
+                dayKey: todayKey,
+                createdAt: new Date().toISOString()
+            };
+            state.attendance.push(record);
+            saveData();
+            e.target.reset();
+
+            // update UI: refresh list so the employee disappears until tomorrow
+            renderAttendanceEmployees();
+            renderAttendance();
+        });
+
+        function renderAttendance() {
+            const q = (document.getElementById('attendanceSearch')?.value || '').toLowerCase();
+            const body = document.getElementById('attendanceTableBody');
+            if (!body) return;
+
+            const filtered = state.attendance
+                .filter(r => {
+                    const hay = `${r.employeeName || ''} ${r.employeeCode || ''} ${r.type || ''}`.toLowerCase();
+                    return hay.includes(q);
+                })
+                .slice()
+                .reverse();
+
+            const fmtMoney = (n) => {
+                const x = Number(n);
+                if (!isFinite(x) || x <= 0) return '—';
+                return x.toFixed(2) + ' ج.م';
+            };
+
+            body.innerHTML = filtered.map(r => `
+                <tr class="border-b border-gray-800 hover:bg-gray-800/50 transition">
+                    <td class="p-3 text-xs text-gray-500">${r.id}</td>
+                    <td class="p-3">
+                        <div onclick="showEmployeeStats('${r.employeeCode}')" class="font-semibold text-white cursor-pointer hover:text-indigo-400 underline decoration-dotted transition">${r.employeeName}</div>
+                        <div class="text-xs text-blue-400 font-mono">${r.employeeCode}</div>
+                    </td>
+                    <td class="p-3 text-sm">${r.type}</td>
+                    <td class="p-3 font-mono text-red-300">${fmtMoney(r.deduction)}</td>
+                    <td class="p-3 text-xs text-gray-300">${r.notes || ''}</td>
+                </tr>
+            `).join('') || `
+                <tr>
+                    <td colspan="5" class="p-6 text-center text-gray-400">لا توجد سجلات حضور/غياب حالياً</td>
+                </tr>
+            `;
+        }
+
+        function showEmployeeStats(code) {
+            const emp = state.employees.find(e => e.code === code);
+            if (!emp) {
+                alert('بيانات الموظف غير موجودة.');
+                return;
+            }
+
+            const records = state.attendance.filter(r => r.employeeCode === code);
+            const presentCount = records.filter(r => r.type === 'حضور').length;
+            const absentRecords = records.filter(r => r.type === 'غياب');
+            const absentCount = absentRecords.length;
+            const totalDeduction = absentRecords.reduce((sum, r) => sum + (r.deduction || 0), 0);
+
+            const content = `
+                <div class="flex flex-col md:flex-row gap-6">
+                    <div class="flex-1 bg-gray-800/50 p-4 rounded-xl border border-gray-700">
+                        <p class="text-xs text-gray-400 mb-1">الموظف</p>
+                        <p class="text-xl font-bold text-white">${emp.fullName}</p>
+                        <p class="text-sm text-indigo-400 font-mono">${emp.code} — ${emp.jobTitle}</p>
+                    </div>
+                    <div class="flex-1 grid grid-cols-2 gap-4">
+                        <div class="bg-green-900/20 border border-green-800 p-3 rounded-xl text-center">
+                            <p class="text-xs text-gray-400">أيام الحضور</p>
+                            <p class="text-2xl font-bold text-green-400">${presentCount}</p>
+                        </div>
+                        <div class="bg-red-900/20 border border-red-800 p-3 rounded-xl text-center">
+                            <p class="text-xs text-gray-400">أيام الغياب</p>
+                            <p class="text-2xl font-bold text-red-400">${absentCount}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-800/50 p-4 rounded-xl border border-gray-700">
+                    <div class="flex justify-between items-center mb-4">
+                        <h4 class="font-bold text-red-300"><i class="fas fa-history ml-2"></i>سجل الغياب والتفاصيل</h4>
+                        <div class="bg-red-600 text-white px-3 py-1 rounded-lg text-sm font-bold">
+                            إجمالي الخصم: ${totalDeduction.toFixed(2)} ج.م
+                        </div>
+                    </div>
+                    
+                    <div class="max-h-60 overflow-y-auto custom-scrollbar">
+                        <table class="w-full text-right text-sm">
+                            <thead>
+                                <tr class="text-gray-500 border-b border-gray-700">
+                                    <th class="p-2">التاريخ (تلقائي)</th>
+                                    <th class="p-2">النوع</th>
+                                    <th class="p-2">الخصم</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${records.length > 0 ? records.map(r => `
+                                    <tr class="border-b border-gray-800/50">
+                                        <td class="p-2 font-mono text-xs">${new Date(r.createdAt).toLocaleString('ar-EG')}</td>
+                                        <td class="p-2">
+                                            <span class="${r.type === 'حضور' ? 'text-green-400' : 'text-red-400'}">${r.type}</span>
+                                        </td>
+                                        <td class="p-2 font-mono ${r.deduction > 0 ? 'text-red-300' : 'text-gray-500'}">${r.deduction > 0 ? r.deduction.toFixed(2) + ' ج.م' : '—'}</td>
+                                    </tr>
+                                `).join('') : '<tr><td colspan="3" class="p-4 text-center text-gray-500">لا توجد سجلات بعد</td></tr>'}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('statsContent').innerHTML = content;
+            document.getElementById('employeeStatsModal').classList.remove('hidden');
+        }
+
+        function closeStatsModal() {
+            document.getElementById('employeeStatsModal').classList.add('hidden');
+        }
+
+        // Workshops
+        document.getElementById('workshopForm')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const fd = new FormData(e.target);
+            const name = String(fd.get('name') || '').trim();
+            const location = String(fd.get('location') || '').trim();
+            const phone = String(fd.get('phone') || '').trim();
+
+            if (!name || !location || !phone) {
+                alert('يرجى إدخال جميع البيانات المطلوبة للورشة');
+                return;
+            }
+
+            const exists = state.workshops.some(w =>
+                String(w.name || '').trim().toLowerCase() === name.toLowerCase() &&
+                String(w.location || '').trim().toLowerCase() === location.toLowerCase()
+            );
+            if (exists) {
+                alert('هذه الورشة موجودة بالفعل بنفس الاسم والموقع.');
+                return;
+            }
+
+            state.workshops.push({
+                id: Date.now(),
+                name,
+                location,
+                phone,
+                createdAt: new Date().toISOString()
+            });
+            saveData();
+            e.target.reset();
+            renderWorkshops();
+            showSuccessModal('تمت إضافة الورشة بنجاح.', name);
+        });
+
+        function deleteWorkshop(id) {
+            if (!confirm('هل أنت متأكد من حذف هذه الورشة؟')) return;
+            state.workshops = state.workshops.filter(w => String(w.id) !== String(id));
+            saveData();
+            renderWorkshops();
+        }
+
+        function renderWorkshops() {
+            const q = (document.getElementById('workshopSearch')?.value || '').toLowerCase();
+            const body = document.getElementById('workshopsTableBody');
+            if (!body) return;
+
+            const filtered = state.workshops
+                .filter(w => {
+                    const hay = `${w.name || ''} ${w.location || ''} ${w.phone || ''}`.toLowerCase();
+                    return hay.includes(q);
+                })
+                .slice()
+                .reverse();
+
+            body.innerHTML = filtered.map(w => `
+                <tr class="border-b border-gray-800 hover:bg-gray-800/50 transition">
+                    <td class="p-3 font-bold text-white">${w.name}</td>
+                    <td class="p-3 text-gray-300">${w.location}</td>
+                    <td class="p-3 font-mono text-sky-300">${w.phone}</td>
+                    <td class="p-3">
+                        <button onclick="deleteWorkshop(${w.id})" class="bg-red-900/30 text-red-500 hover:bg-red-900/50 px-3 py-2 rounded-lg transition" title="حذف">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('') || `
+                <tr>
+                    <td colspan="4" class="p-6 text-center text-gray-400">لا توجد ورش مسجلة حالياً</td>
+                </tr>
+            `;
+        }
+
+        // Success Modal Handling
+        function showSuccessModal(msg, code) {
+            document.getElementById('successMessage').textContent = msg;
+            document.getElementById('generatedCode').textContent = code;
+            document.getElementById('successModal').classList.remove('hidden');
+        }
+
+        function closeSuccessModal() {
+            document.getElementById('successModal').classList.add('hidden');
+        }
+
+        function copyGeneratedCode() {
+            const code = document.getElementById('generatedCode').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                alert('تم نسخ الرقم: ' + code);
+            });
+        }
+
+        // Init
+        const lastTab = localStorage.getItem('dealership_active_tab') || 'reception';
+        showTab(lastTab); 
+    </script>
+</body>
+
+</html>

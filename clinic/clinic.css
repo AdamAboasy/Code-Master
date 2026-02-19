@@ -1,0 +1,254 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap');
+
+* {
+    font-family: 'Cairo', sans-serif;
+}
+
+body {
+    transition: all 0.3s ease;
+}
+
+body.dark .backdrop-blur-xl {
+    backdrop-filter: blur(20px);
+}
+
+.dark {
+    background-color: #0b1220;
+    color: #e2e8f0;
+}
+
+/* Backgrounds */
+.dark .bg-white {
+    background-color: #111c2f !important;
+}
+
+.dark .bg-gray-50 {
+    background-color: #0b1220 !important;
+}
+
+.dark .bg-gray-100 {
+    background-color: #111c2f !important;
+}
+
+.dark .bg-gray-200 {
+    background-color: #1b2a44 !important;
+}
+
+.dark .bg-gray-800 {
+    background-color: #050a14 !important;
+}
+
+/* Panels colors */
+.dark .bg-blue-50 {
+    background-color: rgba(59, 130, 246, 0.20) !important;
+}
+
+.dark .bg-green-50 {
+    background-color: rgba(34, 197, 94, 0.20) !important;
+}
+
+.dark .bg-purple-50 {
+    background-color: rgba(168, 85, 247, 0.20) !important;
+}
+
+.dark .bg-yellow-50 {
+    background-color: rgba(234, 179, 8, 0.20) !important;
+}
+
+.dark .bg-blue-100 {
+    background-color: rgba(59, 130, 246, 0.25) !important;
+}
+
+.dark .bg-green-100 {
+    background-color: rgba(34, 197, 94, 0.25) !important;
+}
+
+.dark .bg-yellow-100 {
+    background-color: rgba(234, 179, 8, 0.25) !important;
+}
+
+.dark .bg-red-100 {
+    background-color: rgba(239, 68, 68, 0.18) !important;
+}
+
+/* High Contrast Text */
+.dark .text-gray-800,
+.dark .text-gray-900 {
+    color: #f8fafc !important;
+}
+
+.dark .text-gray-700 {
+    color: #d5e2f3 !important;
+}
+
+.dark .text-gray-600 {
+    color: #cbd5e1 !important;
+}
+
+.dark .text-gray-500 {
+    color: #a1b3cc !important;
+}
+
+.dark .text-gray-400 {
+    color: #94a3b8 !important;
+}
+
+.dark .text-blue-600 {
+    color: #60a5fa !important;
+}
+
+.dark .text-green-600 {
+    color: #4ade80 !important;
+}
+
+.dark .text-yellow-600 {
+    color: #facc15 !important;
+}
+
+.dark .text-red-600 {
+    color: #fb7185 !important;
+}
+
+/* Tailwind gradient helpers */
+.dark .from-green-50 {
+    --tw-gradient-from: rgb(20 83 45 / 0.35) var(--tw-gradient-from-position) !important;
+    --tw-gradient-to: rgb(20 83 45 / 0) var(--tw-gradient-to-position) !important;
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+}
+
+.dark .to-blue-50 {
+    --tw-gradient-to: rgb(30 58 138 / 0.25) var(--tw-gradient-to-position) !important;
+}
+
+/* Borders & shadows */
+.dark .border,
+.dark .border-b,
+.dark .border-t,
+.dark .border-l,
+.dark .border-r {
+    border-color: #26364f !important;
+}
+
+.dark .shadow-lg,
+.dark .shadow-xl,
+.dark .shadow-2xl {
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.55) !important;
+}
+
+/* Inputs */
+.dark input,
+.dark textarea,
+.dark select {
+    background-color: #0b1220 !important;
+    border-color: #26364f !important;
+    color: #e2e8f0 !important;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+    color: #6b7f9b !important;
+}
+
+/* Make focus ring visible on dark */
+.dark input:focus,
+.dark textarea:focus,
+.dark select:focus {
+    outline: none !important;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.35) !important;
+}
+
+.gradient-bg {
+    background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+}
+
+.card-hover {
+    transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(59, 130, 246, 0.3);
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.ai-pulse {
+    animation: aiPulse 1.5s infinite;
+}
+
+@keyframes aiPulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+    }
+
+    50% {
+        box-shadow: 0 0 0 15px rgba(34, 197, 94, 0);
+    }
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Tips Arcade animations */
+.floaty {
+    animation: floaty 7s ease-in-out infinite;
+}
+
+@keyframes floaty {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+.shine {
+    background: radial-gradient(600px circle at 20% 10%, rgba(59, 130, 246, 0.35), transparent 40%),
+        radial-gradient(700px circle at 80% 30%, rgba(168, 85, 247, 0.30), transparent 45%),
+        radial-gradient(500px circle at 50% 90%, rgba(34, 197, 94, 0.18), transparent 40%);
+}
+
+.kbd {
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.12);
+    padding: 2px 8px;
+    border-radius: 8px;
+    font-size: 12px;
+    line-height: 18px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.dark .kbd {
+    border-color: rgba(148, 163, 184, 0.35);
+    background: rgba(148, 163, 184, 0.10);
+}
+
+/* Better clickable focus */
+button:focus-visible,
+a:focus-visible {
+    outline: 2px solid rgba(59, 130, 246, 0.9);
+    outline-offset: 2px;
+}

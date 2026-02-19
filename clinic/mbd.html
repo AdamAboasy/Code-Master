@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عيادة د. محمد باسم | Dr. Mohamed Basem Clinic</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="clinic.css">
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg fixed w-full z-50">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-6">
+                    <div class="w-12 h-12 gradient-bg rounded-full flex items-center justify-center">
+                        <i class="fas fa-user-doctor text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-gray-800" data-ar="د. محمد باسم" data-en="Dr. Mohamed Basem">
+                            د. محمد باسم</h1>
+                        <p class="text-sm text-gray-500" data-ar="عيادة طبية متكاملة" data-en="Complete Medical Clinic">
+                            عيادة طبية متكاملة</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-4 space-x-reverse">
+                    <button onclick="toggleLanguage()"
+                        class="px-4 py-2 gradient-bg text-white rounded-lg hover:opacity-90 transition">
+                        <i class="fas fa-globe ml-2"></i>
+                        <span id="langBtn" data-ar="English" data-en="عربي">English</span>
+                    </button>
+                    <button onclick="toggleDarkMode()" class="p-2 rounded-lg hover:bg-gray-100 transition"
+                        aria-label="Toggle dark mode">
+                        <i id="darkIcon" class="fas fa-moon text-gray-600 text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-24 pb-12 container mx-auto px-4">
+        <!-- Login Page -->
+        <div id="loginPage" class="max-w-md mx-auto fade-in">
+            <div class="bg-white rounded-2xl shadow-xl p-8">
+                <div class="text-center mb-8">
+                    <div class="w-24 h-24 gradient-bg rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-user-md text-white text-4xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-800" data-ar="تسجيل الدخول" data-en="Login">تسجيل الدخول
+                    </h2>
+                    <p class="text-gray-500 mt-2" data-ar="أدخل بياناتك للوصول"
+                        data-en="Enter your credentials to access">أدخل بياناتك للوصول</p>
+                </div>
+
+                <form onsubmit="handleLogin(event)" class="space-y-6">
+                    <div>
+                        <label class="block text-gray-700 mb-2" data-ar="البريد الإلكتروني" data-en="Email">البريد
+                            الإلكتروني</label>
+                        <input type="email" id="loginEmail" required
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                            data-placeholder-ar="example@email.com" data-placeholder-en="example@email.com"
+                            placeholder="example@email.com">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-2" data-ar="كلمة المرور" data-en="Password">كلمة
+                            المرور</label>
+                        <input type="password" id="loginPassword" required
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                            data-placeholder-ar="••••••••" data-placeholder-en="••••••••" placeholder="••••••••">
+                    </div>
+                    <button type="submit"
+                        class="w-full gradient-bg text-white py-3 rounded-lg hover:opacity-90 transition font-semibold">
+                        <span data-ar="تسجيل الدخول" data-en="Login">تسجيل الدخول</span>
+                    </button>
+                </form>
+
+                <div class="mt-6 text-center space-y-2">
+                    <button onclick="showPage('bookingPage')" class="text-blue-600 hover:underline"
+                        data-ar="احجز الآن بدون تسجيل" data-en="Book now without login">احجز الآن بدون تسجيل</button>
+                    <div>
+                        <button onclick="showPage('tipsArcadePage')" class="text-purple-600 hover:underline"
+                            data-ar="ألعاب ونصائح طبية" data-en="Medical Games & Tips">ألعاب ونصائح طبية</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Booking Page -->
+        <div id="bookingPage" class="hidden fade-in">
+            <div class="max-w-4xl mx-auto">
+                <div class="bg-white rounded-2xl shadow-xl p-8">
+                    <div class="flex items-center mb-8">
+                        <button onclick="goBack()" class="ml-4 p-2 rounded-full hover:bg-gray-100 transition"
+                            aria-label="Back">
+                            <i class="fas fa-arrow-right text-xl"></i>
+                        </button>
+                        <h2 class="text-2xl font-bold text-gray-800" data-ar="حجز موعد" data-en="Book Appointment">حجز
+                            موعد</h2>
+                    </div>
+
+                    <form onsubmit="handleBooking(event)" class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-gray-700 mb-2" data-ar="الاسم الكامل" data-en="Full Name">الاسم
+                                الكامل</label>
+                            <input type="text" id="patientName" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 mb-2" data-ar="رقم الهاتف" data-en="Phone Number">رقم
+                                الهاتف</label>
+                            <input type="tel" id="patientPhone" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                data-placeholder-ar="01xxxxxxxxx" data-placeholder-en="01xxxxxxxxx"
+                                placeholder="01xxxxxxxxx">
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 mb-2" data-ar="البريد الإلكتروني" data-en="Email">البريد
+                                الإلكتروني</label>
+                            <input type="email" id="patientEmail" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                data-placeholder-ar="example@email.com" data-placeholder-en="example@email.com"
+                                placeholder="example@email.com">
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 mb-2" data-ar="العمر" data-en="Age">العمر</label>
+                            <input type="number" id="patientAge" required min="0"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 mb-2" data-ar="القسم" data-en="Department">القسم</label>
+                            <select id="department" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                <option value="" data-ar="اختر القسم" data-en="Select Department">اختر القسم</option>
+                                <option value="general" data-ar="طب عام" data-en="General Medicine">طب عام</option>
+                                <option value="cardiology" data-ar="أمراض القلب" data-en="Cardiology">أمراض القلب
+                                </option>
+                                <option value="dermatology" data-ar="الجلدية" data-en="Dermatology">الجلدية</option>
+                                <option value="orthopedics" data-ar="جراحة العظام" data-en="Orthopedics">جراحة العظام
+                                </option>
+                                <option value="neurology" data-ar="الأعصاب" data-en="Neurology">الأعصاب</option>
+                                <option value="pediatrics" data-ar="طب الأطفال" data-en="Pediatrics">طب الأطفال</option>
+                                <option value="gynecology" data-ar="نساء وتوليد" data-en="Gynecology">نساء وتوليد
+                                </option>
+                                <option value="psychiatry" data-ar="الطب النفسي" data-en="Psychiatry">الطب النفسي
+                                </option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 mb-2" data-ar="موعد الحجز" data-en="Appointment Date">موعد
+                                الحجز</label>
+                            <input type="date" id="appointmentDate" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                            <p class="text-xs text-gray-500 mt-2"
+                                data-ar="سيتم فتح رسالة بريد لإرسال بيانات الحجز على الإيميل."
+                                data-en="An email draft will open to send booking details.">سيتم فتح رسالة بريد لإرسال
+                                بيانات الحجز على الإيميل.</p>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-gray-700 mb-2" data-ar="وصف الحالة" data-en="Description">وصف
+                                الحالة</label>
+                            <textarea id="symptoms" rows="4"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                data-placeholder-ar="..." data-placeholder-en="..." placeholder="... "></textarea>
+                        </div>
+                        <div class="md:col-span-2">
+                            <button type="submit"
+                                class="w-full gradient-bg text-white py-4 rounded-lg hover:opacity-90 transition font-semibold text-lg">
+                                <i class="fas fa-calendar-check ml-2"></i>
+                                <span data-ar="تأكيد الحجز" data-en="Confirm Booking">تأكيد الحجز</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Diagnosis Page (Doctor Mode) -->
+        <div id="aiDiagnosisPage" class="hidden fade-in">
+            <div class="max-w-4xl mx-auto">
+                <div class="bg-white rounded-2xl shadow-xl p-6 h-[85vh] flex flex-col">
+                    <!-- Header -->
+                    <div class="flex items-center justify-between border-b pb-4 mb-4">
+                        <div class="flex items-center">
+                            <button onclick="goBack()" class="ml-4 p-2 rounded-full hover:bg-gray-100 transition"
+                                aria-label="Back">
+                                <i class="fas fa-arrow-right text-xl"></i>
+                            </button>
+                            <div>
+                                <h2 class="text-xl font-bold text-gray-800 flex items-center">
+                                    <i class="fas fa-user-md ml-2 text-green-600 text-2xl"></i>
+                                    <span data-ar="الطبيب الذكي" data-en="AI Doctor">الطبيب الذكي</span>
+                                </h2>
+                                <p class="text-xs text-green-600 flex items-center gap-1">
+                                    <span class="w-2 h-2 bg-green-500 rounded-full ai-pulse"></span>
+                                    <span data-ar="متصل الآن - جاهز للتشخيص" data-en="Online - Ready to Diagnose">متصل
+                                        الآن - جاهز للتشخيص</span>
+                                </p>
+                            </div>
+                        </div>
+                        <button onclick="resetAIChat()" class="text-sm text-gray-500 hover:text-red-500 transition">
+                            <i class="fas fa-trash-alt ml-1"></i> <span data-ar="محادثة جديدة" data-en="New Chat">محادثة
+                                جديدة</span>
+                        </button>
+                    </div>
+
+                    <!-- Chat Area -->
+                    <div id="aiChatBox"
+                        class="flex-1 overflow-y-auto space-y-4 p-4 bg-gray-50 rounded-xl mb-4 border border-gray-100 relative">
+                        <!-- Messages will appear here -->
+                        <div class="flex items-start">
+                            <div
+                                class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center ml-3 border border-green-200 shadow-sm flex-shrink-0">
+                                <i class="fas fa-user-doctor text-green-600 text-lg"></i>
+                            </div>
+                            <div
+                                class="bg-white p-4 rounded-2xl rounded-tr-none shadow-sm border border-gray-200 max-w-[85%]">
+                                <p class="text-gray-800 leading-relaxed"
+                                    data-ar="أهلاً بك. أنا طبيبك الافتراضي. لكي أستطيع تشخيص حالتك بدقة 100%، سأحتاج لطرح بعض الأسئلة."
+                                    data-en="Welcome. I am your virtual doctor. To diagnose you with 100% accuracy, I will need to ask a few questions.">
+                                </p>
+                                <p class="text-gray-800 mt-2 leading-relaxed" data-ar="أولاً، كم عمرك؟"
+                                    data-en="First, how old are you?"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Input Area -->
+                    <form onsubmit="handleAIChatSubmit(event)" class="relative">
+                        <div class="flex gap-2">
+                            <input type="text" id="aiChatInput" autocomplete="off"
+                                class="flex-1 px-4 py-4 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:bg-white transition shadow-sm"
+                                data-placeholder-ar="اكتب إجابتك هنا..." data-placeholder-en="Type your answer here..."
+                                placeholder="اكتب إجابتك هنا...">
+                            <button type="submit"
+                                class="px-6 bg-gradient-to-r from-green-500 to-teal-600 text-white rounded-xl hover:opacity-90 transition shadow-lg transform active:scale-95">
+                                <i class="fas fa-paper-plane text-xl"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tips Arcade Page -->
+        <div id="tipsArcadePage" class="hidden fade-in">
+            <div class="max-w-6xl mx-auto">
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+                    <div class="relative shine">
+                        <div class="px-8 pt-8 pb-6">
+                            <div class="flex items-center justify-between gap-4 flex-wrap">
+                                <div class="flex items-center gap-3">
+                                    <button onclick="goBack()" class="p-2 rounded-full hover:bg-white/40 transition"
+                                        aria-label="Back">
+                                        <i class="fas fa-arrow-right text-xl"></i>
+                                    </button>
+                                    <div>
+                                        <h2 class="text-3xl font-extrabold text-gray-900" data-ar="ألعاب ونصائح طبية"
+                                            data-en="Medical Games & Tips">ألعاب ونصائح طبية</h2>
+                                        <p class="text-gray-600 mt-1"
+                                            data-ar="مكتبة تفاعلية (100,000+) نصيحة/معلومة صحية عامة — للثقافة فقط"
+                                            data-en="Interactive library (100,000+) general health tips/facts — for education only">
+                                            مكتبة تفاعلية (100,000+) نصيحة/معلومة صحية عامة — للثقافة فقط</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="kbd"><i class="fas fa-keyboard"></i><span data-ar="اختصارات:"
+                                            data-en="Shortcuts:">اختصارات:</span> <span class="opacity-90">N</span> /
+                                        <span class="opacity-90">P</span></span>
+                                    <button onclick="tipsShuffle()"
+                                        class="px-4 py-2 bg-white/50 hover:bg-white/70 rounded-lg transition border border-white/40">
+                                        <i class="fas fa-random ml-2"></i><span data-ar="عشوائي"
+                                            data-en="Shuffle">عشوائي</span>
+                                    </button>
+                                    <button onclick="tipsToggleFavoritesView()"
+                                        class="px-4 py-2 bg-white/50 hover:bg-white/70 rounded-lg transition border border-white/40">
+                                        <i class="fas fa-heart ml-2 text-pink-600"></i><span data-ar="المفضلة"
+                                            data-en="Favorites">المفضلة</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="grid md:grid-cols-4 gap-4 mt-6">
+                                <div class="bg-white/60 backdrop-blur rounded-xl p-4 border border-white/40">
+                                    <div class="flex items-center justify-between">
+                                        <p class="text-gray-600 text-sm" data-ar="إجمالي النصائح" data-en="Total tips">
+                                            إجمالي النصائح</p>
+                                        <i class="fas fa-layer-group text-blue-600"></i>
+                                    </div>
+                                    <p id="tipsTotal" class="text-2xl font-extrabold text-gray-900">100,000</p>
+                                </div>
+                                <div class="bg-white/60 backdrop-blur rounded-xl p-4 border border-white/40">
+                                    <div class="flex items-center justify-between">
+                                        <p class="text-gray-600 text-sm" data-ar="السكور" data-en="Score">السكور</p>
+                                        <i class="fas fa-bolt text-yellow-600"></i>
+                                    </div>
+                                    <p id="tipsScore" class="text-2xl font-extrabold text-gray-900">0</p>
+                                </div>
+                                <div class="bg-white/60 backdrop-blur rounded-xl p-4 border border-white/40">
+                                    <div class="flex items-center justify-between">
+                                        <p class="text-gray-600 text-sm" data-ar="سلسلة صحيحة" data-en="Win Streak">
+                                            سلسلة صحيحة</p>
+                                        <i class="fas fa-fire text-red-600"></i>
+                                    </div>
+                                    <p id="tipsStreak" class="text-2xl font-extrabold text-gray-900">0</p>
+                                </div>
+                                <div class="bg-white/60 backdrop-blur rounded-xl p-4 border border-white/40">
+                                    <div class="flex items-center justify-between">
+                                        <p class="text-gray-600 text-sm" data-ar="المفضلة" data-en="Favorites">المفضلة
+                                        </p>
+                                        <i class="fas fa-heart text-pink-600"></i>
+                                    </div>
+                                    <p id="tipsFavCount" class="text-2xl font-extrabold text-gray-900">0</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="px-8 pb-6">
+                            <div class="flex flex-wrap gap-2">
+                                <button class="tips-tab px-4 py-2 rounded-full bg-gray-900 text-white" data-tab="cards"
+                                    onclick="tipsSwitchTab('cards')">
+                                    <i class="fas fa-id-card ml-2"></i><span data-ar="بطاقات"
+                                        data-en="Cards">بطاقات</span>
+                                </button>
+                                <button
+                                    class="tips-tab px-4 py-2 rounded-full bg-white/50 hover:bg-white/70 transition border border-white/40"
+                                    data-tab="quiz" onclick="tipsSwitchTab('quiz')">
+                                    <i class="fas fa-list-check ml-2"></i><span data-ar="اختبار"
+                                        data-en="Quiz">اختبار</span>
+                                </button>
+                                <button
+                                    class="tips-tab px-4 py-2 rounded-full bg-white/50 hover:bg-white/70 transition border border-white/40"
+                                    data-tab="challenge" onclick="tipsSwitchTab('challenge')">
+                                    <i class="fas fa-stopwatch ml-2"></i><span data-ar="تحدي الوقت"
+                                        data-en="Time Challenge">تحدي الوقت</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-8">
+                        <!-- Cards Tab -->
+                        <div id="tipsTabCards" class="">
+                            <div class="grid lg:grid-cols-3 gap-6">
+                                <div class="lg:col-span-2">
+                                    <div class="rounded-2xl border bg-gray-50 p-6 relative overflow-hidden">
+                                        <div class="absolute -top-10 -left-10 text-8xl opacity-10 floaty" id="tipEmoji">
+                                            🩺</div>
+                                        <div class="flex items-start justify-between gap-3 flex-wrap">
+                                            <div>
+                                                <div class="flex items-center gap-2 flex-wrap">
+                                                    <span id="tipCategoryPill"
+                                                        class="px-3 py-1 rounded-full text-sm font-semibold bg-blue-100 text-blue-700">—</span>
+                                                    <span id="tipIndex" class="text-sm text-gray-500">#—</span>
+                                                    <span id="tipModePill"
+                                                        class="px-3 py-1 rounded-full text-sm font-semibold bg-purple-100 text-purple-700 hidden"
+                                                        data-ar="وضع المفضلة" data-en="Favorites mode">وضع
+                                                        المفضلة</span>
+                                                </div>
+                                                <h3 class="text-2xl font-extrabold text-gray-900 mt-3"
+                                                    data-ar="نصيحة اليوم" data-en="Tip of the Day">نصيحة اليوم</h3>
+                                            </div>
+                                            <div class="flex items-center gap-2">
+                                                <button id="tipFavBtn" onclick="tipsToggleFavorite()"
+                                                    class="px-4 py-2 rounded-lg bg-white hover:bg-gray-100 transition border"
+                                                    type="button">
+                                                    <i class="fas fa-heart ml-2 text-gray-400" id="tipFavIcon"></i>
+                                                    <span data-ar="حفظ" data-en="Save">حفظ</span>
+                                                </button>
+                                                <button onclick="tipsCopy()"
+                                                    class="px-4 py-2 rounded-lg bg-white hover:bg-gray-100 transition border"
+                                                    type="button">
+                                                    <i class="fas fa-copy ml-2"></i>
+                                                    <span data-ar="نسخ" data-en="Copy">نسخ</span>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <p id="tipText" class="mt-4 text-lg leading-8 text-gray-800">—</p>
+
+                                        <div class="mt-6 flex items-center justify-between flex-wrap gap-3">
+                                            <div class="flex items-center gap-2">
+                                                <button onclick="tipsPrev()"
+                                                    class="px-5 py-2 rounded-lg bg-gray-900 text-white hover:opacity-90 transition"
+                                                    type="button">
+                                                    <i class="fas fa-chevron-right ml-2"></i><span data-ar="السابق"
+                                                        data-en="Previous">السابق</span>
+                                                </button>
+                                                <button onclick="tipsNext()"
+                                                    class="px-5 py-2 rounded-lg gradient-bg text-white hover:opacity-90 transition"
+                                                    type="button">
+                                                    <i class="fas fa-chevron-left ml-2"></i><span data-ar="التالي"
+                                                        data-en="Next">التالي</span>
+                                                </button>
+                                            </div>
+                                            <div class="text-sm text-gray-500"
+                                                data-ar="هذه نصائح عامة وليست بديلاً عن استشارة الطبيب."
+                                                data-en="These are general tips and not a substitute for medical advice.">
+                                                هذه نصائح عامة وليست بديلاً عن استشارة الطبيب.</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="rounded-2xl border bg-white p-6">
+                                        <div class="flex items-center justify-between">
+                                            <h4 class="text-lg font-bold text-gray-900" data-ar="اختَر فئة"
+                                                data-en="Pick a category">اختَر فئة</h4>
+                                            <button onclick="tipsSetAllCategories()"
+                                                class="text-sm text-blue-600 hover:underline" type="button"
+                                                data-ar="الكل" data-en="All">الكل</button>
+                                        </div>
+                                        <div id="tipsCategories" class="mt-4 grid grid-cols-2 gap-2"></div>
+
+                                        <div class="mt-6 border-t pt-5">
+                                            <h4 class="text-lg font-bold text-gray-900" data-ar="ابدأ اختبار سريع"
+                                                data-en="Start Quick Quiz">ابدأ اختبار سريع</h4>
+                                            <p class="text-sm text-gray-600 mt-1" data-ar="اختر الفئة الصحيحة للنصيحة."
+                                                data-en="Select the correct category for the tip.">اختر الفئة الصحيحة
+                                                للنصيحة.</p>
+                                            <button onclick="tipsSwitchTab('quiz')"
+                                                class="mt-4 w-full px-4 py-3 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-bold hover:opacity-90 transition"
+                                                type="button">
+                                                <i class="fas fa-play ml-2"></i><span data-ar="ابدأ"
+                                                    data-en="Start">ابدأ</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quiz Tab -->
+                        <div id="tipsTabQuiz" class="hidden">
+                            <div class="grid lg:grid-cols-3 gap-6">
+                                <div class="lg:col-span-2">
+                                    <div class="rounded-2xl border bg-gray-50 p-6">
+                                        <div class="flex items-center justify-between flex-wrap gap-3">
+                                            <div>
+                                                <div class="text-sm text-gray-500" data-ar="السؤال" data-en="Question">
+                                                    السؤال</div>
+                                                <h3 class="text-2xl font-extrabold text-gray-900 mt-1"
+                                                    data-ar="هذه النصيحة تخص أي فئة؟"
+                                                    data-en="Which category does this tip belong to?">هذه النصيحة تخص أي
+                                                    فئة؟</h3>
+                                            </div>
+                                            <button onclick="tipsNewQuiz()"
+                                                class="px-4 py-2 rounded-lg bg-white hover:bg-gray-100 transition border"
+                                                type="button">
+                                                <i class="fas fa-rotate ml-2"></i><span data-ar="سؤال جديد"
+                                                    data-en="New Question">سؤال جديد</span>
+                                            </button>
+                                        </div>
+
+                                        <div class="mt-4 bg-white rounded-xl border p-5">
+                                            <p id="quizTipText" class="text-lg leading-8 text-gray-800">—</p>
+                                        </div>
+
+                                        <div id="quizOptions" class="mt-5 grid sm:grid-cols-2 gap-3"></div>
+
+                                        <div id="quizFeedback" class="mt-4 hidden rounded-xl p-4 border"></div>
+
+                                        <div class="mt-6 flex items-center justify-between flex-wrap gap-3">
+                                            <button onclick="tipsSwitchTab('cards')"
+                                                class="px-5 py-2 rounded-lg bg-gray-900 text-white hover:opacity-90 transition"
+                                                type="button">
+                                                <i class="fas fa-id-card ml-2"></i><span data-ar="رجوع للبطاقات"
+                                                    data-en="Back to Cards">رجوع للبطاقات</span>
+                                            </button>
+                                            <div class="text-sm text-gray-500" data-ar="نصيحة: اضغط N لسؤال جديد."
+                                                data-en="Tip: Press N for a new question.">نصيحة: اضغط N لسؤال جديد.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="rounded-2xl border bg-white p-6">
+                                        <h4 class="text-lg font-bold text-gray-900" data-ar="إعدادات الاختبار"
+                                            data-en="Quiz Settings">إعدادات الاختبار</h4>
+                                        <div class="mt-4 space-y-4">
+                                            <div>
+                                                <label class="block text-sm text-gray-700 mb-2" data-ar="عدد الاختيارات"
+                                                    data-en="Number of choices">عدد الاختيارات</label>
+                                                <select id="quizChoicesCount"
+                                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg"
+                                                    onchange="tipsNewQuiz()">
+                                                    <option value="4">4</option>
+                                                    <option value="3">3</option>
+                                                    <option value="2">2</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm text-gray-700 mb-2" data-ar="تصفية الفئات"
+                                                    data-en="Filter categories">تصفية الفئات</label>
+                                                <div id="quizCategoryFilter" class="grid grid-cols-2 gap-2"></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="mt-6 border-t pt-5">
+                                            <button onclick="tipsSwitchTab('challenge')"
+                                                class="w-full px-4 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold hover:opacity-90 transition"
+                                                type="button">
+                                                <i class="fas fa-stopwatch ml-2"></i><span data-ar="جرّب تحدي الوقت"
+                                                    data-en="Try Time Challenge">جرّب تحدي الوقت</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Challenge Tab -->
+                        <div id="tipsTabChallenge" class="hidden">
+                            <div class="rounded-2xl border bg-gray-50 p-6">
+                                <div class="flex items-center justify-between flex-wrap gap-3">
+                                    <div>
+                                        <div class="text-sm text-gray-500" data-ar="تحدي" data-en="Challenge">تحدي</div>
+                                        <h3 class="text-2xl font-extrabold text-gray-900 mt-1" data-ar="تحدي 30 ثانية"
+                                            data-en="30-Second Challenge">تحدي 30 ثانية</h3>
+                                        <p class="text-sm text-gray-600 mt-1"
+                                            data-ar="اختر الفئة الصحيحة بأسرع ما يمكن."
+                                            data-en="Pick the correct category as fast as you can.">اختر الفئة الصحيحة
+                                            بأسرع ما يمكن.</p>
+                                    </div>
+                                    <div class="flex items-center gap-3">
+                                        <div class="px-4 py-2 rounded-xl bg-white border">
+                                            <span class="text-sm text-gray-500" data-ar="الوقت"
+                                                data-en="Time">الوقت</span>
+                                            <span id="challengeTime" class="font-extrabold text-gray-900 mr-2">30</span>
+                                        </div>
+                                        <div class="px-4 py-2 rounded-xl bg-white border">
+                                            <span class="text-sm text-gray-500" data-ar="النقاط"
+                                                data-en="Points">النقاط</span>
+                                            <span id="challengePoints"
+                                                class="font-extrabold text-gray-900 mr-2">0</span>
+                                        </div>
+                                        <button id="challengeStartBtn" onclick="tipsStartChallenge()"
+                                            class="px-5 py-2 rounded-lg bg-gray-900 text-white hover:opacity-90 transition"
+                                            type="button">
+                                            <i class="fas fa-play ml-2"></i><span data-ar="ابدأ"
+                                                data-en="Start">ابدأ</span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="mt-5 bg-white rounded-xl border p-5">
+                                    <p id="challengeTipText" class="text-lg leading-8 text-gray-800">—</p>
+                                </div>
+
+                                <div id="challengeOptions" class="mt-5 grid sm:grid-cols-4 gap-3"></div>
+
+                                <div id="challengeFeedback" class="mt-4 hidden rounded-xl p-4 border"></div>
+
+                                <div class="mt-6 flex items-center justify-between flex-wrap gap-3">
+                                    <button onclick="tipsSwitchTab('quiz')"
+                                        class="px-5 py-2 rounded-lg bg-white hover:bg-gray-100 transition border"
+                                        type="button">
+                                        <i class="fas fa-list-check ml-2"></i><span data-ar="للإختبار"
+                                            data-en="To Quiz">للإختبار</span>
+                                    </button>
+                                    <button onclick="tipsSwitchTab('cards')"
+                                        class="px-5 py-2 rounded-lg bg-white hover:bg-gray-100 transition border"
+                                        type="button">
+                                        <i class="fas fa-id-card ml-2"></i><span data-ar="للبطاقات"
+                                            data-en="To Cards">للبطاقات</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Courses Page -->
+        <div id="coursesPage" class="hidden fade-in">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center mb-8">
+                    <button onclick="goBack()"
+                        class="mb-4 px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition">
+                        <i class="fas fa-arrow-right ml-2"></i>
+                        <span data-ar="رجوع" data-en="Back">رجوع</span>
+                    </button>
+                    <h2 class="text-3xl font-bold text-gray-800" data-ar="كورسات الطب" data-en="Medical Courses">كورسات
+                        الطب</h2>
+                    <p class="text-gray-500 mt-2" data-ar="تعلم من أفضل الدكاترة" data-en="Learn from the best doctors">
+                        تعلم من أفضل الدكاترة</p>
+                </div>
+
+                <!-- Department Filter -->
+                <div class="flex flex-wrap justify-center gap-3 mb-8">
+                    <button onclick="filterCourses('all')"
+                        class="px-4 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition course-filter"
+                        data-filter="all">
+                        <span data-ar="الكل" data-en="All">الكل</span>
+                    </button>
+                    <button onclick="filterCourses('general')"
+                        class="px-4 py-2 bg-gray-200 text-gray-700 rounded-full hover:bg-blue-500 hover:text-white transition course-filter"
+                        data-filter="general">
+                        <span data-ar="طب عام" data-en="General">طب عام</span>
+                    </button>
+                    <button onclick="filterCourses('cardiology')"
+                        class="px-4 py-2 bg-gray-200 text-gray-700 rounded-full hover:bg-blue-500 hover:text-white transition course-filter"
+                        data-filter="cardiology">
+                        <span data-ar="أمراض القلب" data-en="Cardiology">أمراض القلب</span>
+                    </button>
+                    <button onclick="filterCourses('neurology')"
+                        class="px-4 py-2 bg-gray-200 text-gray-700 rounded-full hover:bg-blue-500 hover:text-white transition course-filter"
+                        data-filter="neurology">
+                        <span data-ar="الأعصاب" data-en="Neurology">الأعصاب</span>
+                    </button>
+                    <button onclick="filterCourses('dermatology')"
+                        class="px-4 py-2 bg-gray-200 text-gray-700 rounded-full hover:bg-blue-500 hover:text-white transition course-filter"
+                        data-filter="dermatology">
+                        <span data-ar="الجلدية" data-en="Dermatology">الجلدية</span>
+                    </button>
+                    <button onclick="filterCourses('orthopedics')"
+                        class="px-4 py-2 bg-gray-200 text-gray-700 rounded-full hover:bg-blue-500 hover:text-white transition course-filter"
+                        data-filter="orthopedics">
+                        <span data-ar="العظام" data-en="Orthopedics">العظام</span>
+                    </button>
+                    <button onclick="filterCourses('pediatrics')"
+                        class="px-4 py-2 bg-gray-200 text-gray-700 rounded-full hover:bg-blue-500 hover:text-white transition course-filter"
+                        data-filter="pediatrics">
+                        <span data-ar="الأطفال" data-en="Pediatrics">الأطفال</span>
+                    </button>
+                    <button onclick="filterCourses('gynecology')"
+                        class="px-4 py-2 bg-gray-200 text-gray-700 rounded-full hover:bg-blue-500 hover:text-white transition course-filter"
+                        data-filter="gynecology">
+                        <span data-ar="نساء وتوليد" data-en="Gynecology">نساء وتوليد</span>
+                    </button>
+                    <button onclick="filterCourses('psychiatry')"
+                        class="px-4 py-2 bg-gray-200 text-gray-700 rounded-full hover:bg-blue-500 hover:text-white transition course-filter"
+                        data-filter="psychiatry">
+                        <span data-ar="النفسي" data-en="Psychiatry">النفسي</span>
+                    </button>
+                </div>
+
+                <!-- Courses Grid -->
+                <div id="coursesGrid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Courses will be injected here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard -->
+        <div id="dashboardPage" class="hidden fade-in">
+            <div class="max-w-6xl mx-auto">
+                <div class="bg-white rounded-2xl shadow-xl p-8">
+                    <div class="flex justify-between items-center mb-8">
+                        <h2 class="text-2xl font-bold text-gray-800" data-ar="لوحة التحكم" data-en="Dashboard">لوحة
+                            التحكم</h2>
+                        <button onclick="logout()"
+                            class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition">
+                            <i class="fas fa-sign-out-alt ml-2"></i>
+                            <span data-ar="تسجيل خروج" data-en="Logout">تسجيل خروج</span>
+                        </button>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="grid md:grid-cols-5 gap-4 mb-8">
+                        <button onclick="showPage('bookingPage')"
+                            class="card-hover bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl p-6 text-center">
+                            <i class="fas fa-calendar-plus text-3xl mb-3"></i>
+                            <h3 class="text-lg font-bold" data-ar="حجز موعد" data-en="Book Appointment">حجز موعد</h3>
+                        </button>
+                        <button onclick="showPage('aiDiagnosisPage')"
+                            class="card-hover bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl p-6 text-center">
+                            <i class="fas fa-robot text-3xl mb-3 ai-pulse"></i>
+                            <h3 class="text-lg font-bold" data-ar="تشخيص AI" data-en="AI Diagnosis">تشخيص AI</h3>
+                        </button>
+                        <button onclick="showPage('coursesPage')"
+                            class="card-hover bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-xl p-6 text-center">
+                            <i class="fas fa-graduation-cap text-3xl mb-3"></i>
+                            <h3 class="text-lg font-bold" data-ar="الكورسات" data-en="Courses">الكورسات</h3>
+                        </button>
+                        <button onclick="showPage('tipsArcadePage')"
+                            class="card-hover bg-gradient-to-r from-fuchsia-500 to-indigo-600 text-white rounded-xl p-6 text-center">
+                            <i class="fas fa-gamepad text-3xl mb-3"></i>
+                            <h3 class="text-lg font-bold" data-ar="ألعاب ونصائح" data-en="Games & Tips">ألعاب ونصائح
+                            </h3>
+                        </button>
+                        <button onclick="rateClinicPrompt()"
+                            class="card-hover bg-gradient-to-r from-yellow-500 to-orange-500 text-white rounded-xl p-6 text-center">
+                            <i class="fas fa-star text-3xl mb-3"></i>
+                            <h3 class="text-lg font-bold" data-ar="تقييم العيادة" data-en="Rate Clinic">تقييم العيادة
+                            </h3>
+                        </button>
+                    </div>
+
+                    <!-- Stats -->
+                    <div class="grid md:grid-cols-4 gap-4 mb-8">
+                        <div class="bg-blue-50 rounded-xl p-4 text-center">
+                            <i class="fas fa-users text-blue-500 text-2xl mb-2"></i>
+                            <h4 id="statPatients" class="text-3xl font-bold text-gray-800">0</h4>
+                            <p class="text-gray-500" data-ar="المرضى" data-en="Patients">المرضى</p>
+                        </div>
+                        <div class="bg-green-50 rounded-xl p-4 text-center">
+                            <i class="fas fa-calendar-check text-green-500 text-2xl mb-2"></i>
+                            <h4 id="statAppointments" class="text-3xl font-bold text-gray-800">0</h4>
+                            <p class="text-gray-500" data-ar="الحجوزات" data-en="Appointments">الحجوزات</p>
+                        </div>
+                        <div class="bg-purple-50 rounded-xl p-4 text-center">
+                            <i class="fas fa-video text-purple-500 text-2xl mb-2"></i>
+                            <h4 id="statCourses" class="text-3xl font-bold text-gray-800">0</h4>
+                            <p class="text-gray-500" data-ar="الكورسات" data-en="Courses">الكورسات</p>
+                        </div>
+                        <div class="bg-yellow-50 rounded-xl p-4 text-center">
+                            <i class="fas fa-star text-yellow-500 text-2xl mb-2"></i>
+                            <h4 id="statRating" class="text-3xl font-bold text-gray-800">0</h4>
+                            <p class="text-gray-500" data-ar="التقييم" data-en="Rating">التقييم</p>
+                        </div>
+                    </div>
+
+                    <!-- Recent Bookings -->
+                    <div class="bg-gray-50 rounded-xl p-6">
+                        <div class="flex items-center justify-between gap-3 flex-wrap">
+                            <h3 class="text-xl font-bold text-gray-800 mb-4" data-ar="أحدث الحجوزات"
+                                data-en="Recent Bookings">أحدث الحجوزات</h3>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="text-right border-b">
+                                        <th class="pb-3" data-ar="الاسم" data-en="Name">الاسم</th>
+                                        <th class="pb-3" data-ar="القسم" data-en="Department">القسم</th>
+                                        <th class="pb-3" data-ar="الموعد" data-en="Date">الموعد</th>
+                                        <th class="pb-3" data-ar="الحالة" data-en="Status">الحالة</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recentBookings">
+                                    <!-- Will be injected here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Course Modal -->
+        <div id="courseModal"
+            class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 id="modalCourseTitle" class="text-2xl font-bold text-gray-800"></h3>
+                        <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700" aria-label="Close">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                    <div id="modalCourseContent" class="space-y-4"></div>
+                    <div class="mt-6 flex gap-3">
+                        <button onclick="enrollCourse()"
+                            class="flex-1 gradient-bg text-white py-3 rounded-lg hover:opacity-90 transition font-semibold">
+                            <i class="fas fa-user-plus ml-2"></i>
+                            <span data-ar="سجل الآن" data-en="Enroll Now">سجل الآن</span>
+                        </button>
+                        <button onclick="closeModal()"
+                            class="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition">
+                            <span data-ar="إلغاء" data-en="Cancel">إلغاء</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8 mt-12">
+        <div class="container mx-auto px-4">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center mb-4 gap-4">
+                        <div class="w-10 h-10 gradient-bg rounded-full flex items-center justify-center">
+                            <i class="fas fa-user-doctor text-white"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold" data-ar="د. محمد باسم" data-en="Dr. Mohamed Basem">د. محمد باسم</h3>
+                            <p class="text-sm text-gray-400" data-ar="عيادة طبية متكاملة"
+                                data-en="Complete Medical Clinic">عيادة طبية متكاملة</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 text-sm" data-ar="نقدم أفضل الخدمات الطبية باستخدام أحدث التقنيات"
+                        data-en="We provide the best medical services using latest technology">نقدم أفضل الخدمات الطبية
+                        باستخدام أحدث التقنيات</p>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4" data-ar="روابط سريعة" data-en="Quick Links">روابط سريعة</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><a href="#" onclick="showPage('bookingPage'); return false;"
+                                class="hover:text-white transition" data-ar="احجز الآن" data-en="Book Now">احجز الآن</a>
+                        </li>
+                        <li><a href="#" onclick="showPage('coursesPage'); return false;"
+                                class="hover:text-white transition" data-ar="الكورسات" data-en="Courses">الكورسات</a>
+                        </li>
+                        <li><a href="#" onclick="showPage('aiDiagnosisPage'); return false;"
+                                class="hover:text-white transition" data-ar="تشخيص AI" data-en="AI Diagnosis">تشخيص
+                                AI</a></li>
+                        <li><a href="#" onclick="showPage('tipsArcadePage'); return false;"
+                                class="hover:text-white transition" data-ar="ألعاب ونصائح" data-en="Games & Tips">ألعاب
+                                ونصائح</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4" data-ar="التواصل" data-en="Contact">التواصل</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><i class="fas fa-phone ml-2"></i><span>01010014590</span></li>
+                        <li><i class="fas fa-phone ml-2"></i><span>01095760494</span></li>
+                        <li><i class="fas fa-envelope ml-2"></i><span>dr.mohamed@clinic.com</span></li>
+                        <li><i class="fas fa-map-marker-alt ml-2"></i><span data-ar="القاهرة، مصر"
+                                data-en="Cairo, Egypt">القاهرة، مصر</span></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4" data-ar="تابعنا" data-en="Follow Us">تابعنا</h4>
+                    <div class="flex space-x-4 space-x-reverse">
+                        <a href="#"
+                            class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-700 transition"
+                            aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"
+                            class="w-10 h-10 bg-blue-400 rounded-full flex items-center justify-center hover:bg-blue-500 transition"
+                            aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#"
+                            class="w-10 h-10 bg-pink-600 rounded-full flex items-center justify-center hover:bg-pink-700 transition"
+                            aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#"
+                            class="w-10 h-10 bg-blue-700 rounded-full flex items-center justify-center hover:bg-blue-800 transition"
+                            aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400 text-sm">
+                <p>© 2026 <span data-ar="جميع الحقوق محفوظة" data-en="All Rights Reserved">جميع الحقوق محفوظة</span> |
+                    <span data-ar="عيادة د. محمد باسم" data-en="Dr. Mohamed Basem Clinic">عيادة د. محمد باسم</span>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div id="toast"
+        class="fixed bottom-4 right-4 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg hidden z-50 max-w-[92vw]">
+        <div class="flex items-center">
+            <i class="fas fa-check-circle ml-2"></i>
+            <span id="toastMessage" class="text-sm"></span>
+        </div>
+    </div>
+
+    <script src="clinc.js"></script>
+</body>
+
+</html>
